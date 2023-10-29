@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-26T00:50:17.373377+00:00",
+  "timestamp": "2023-10-29T00:54:21.720579+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -8534,7 +8534,7 @@
       ],
       "body": "[filing on behalf, not my issue]\r\nA request has been received via work in ISO to enable an option to HMAC KB JWT to enable non-repudiation.",
       "createdAt": "2023-08-11T00:29:20Z",
-      "updatedAt": "2023-10-02T16:26:27Z",
+      "updatedAt": "2023-10-26T21:50:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -8543,6 +8543,13 @@
           "body": "My understanding is that it's not about non-repudiation but rather that it enables some degree of repudiation b/c the HMAC key is known to both parties (likely resulting from an ECDH exchange at the \"protocol\" layer requesting/presenting the credential). There have been some other claims of privacy benefits too but I'd be lying if I said I understood them.",
           "createdAt": "2023-08-21T01:13:56Z",
           "updatedAt": "2023-09-25T21:58:50Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A potential variation on this issue (and maybe common point of misunderstanding/confusion in general) would instead be to allow for the Issuer-signed JWT to be HMAC'd. It's been discussed a few times I think but came up again with Neil Madden being supportive of the idea in this ML thread https://mailarchive.ietf.org/arch/msg/oauth/rPitG7FvJcVEyIcAwn0bXzGToGM/ that I've copied relevant parts from:\r\n\r\n\r\n> > >  [Neil] The draft repeatedly says that a symmetric signature algorithm (MAC) must not be used. Perhaps I\u2019m missing something here, but why not? It doesn\u2019t seem like it compromises any of the intended security properties. Use of a symmetric MAC may also limit the privacy impacts on users as it provides some measure of deniability (similar to that mentioned in section 12.1), as any Verifier in possession of the secret key could also have produced any claims that are subsequently leaked, allowing the user to deny that they were produced by the supposed Issuer. (This deniability property holds even without subsequent leaking of old signing keys).\r\n\r\n> > [Brian] The thinking behind that was basically that this Issuer-Holder-Verifier model implies/assumes that an Issuer issues a token with no idea of where it\u2019ll be presented and having a shared symmetric key seemed really weird in that situation. Also hard to explain why or how a shared symmetric key would work in that situation too. That said, there\u2019s been some talk about loosening that restriction - largely around the same reasoning on deniability that you cite - I guess your comment here should be taken as supportive of that prospective change?\r\n\r\n>  [Neil] Yes. \r\n\r\n",
+          "createdAt": "2023-10-26T19:57:36Z",
+          "updatedAt": "2023-10-26T21:50:41Z"
         }
       ]
     },
@@ -9053,7 +9060,7 @@
       "labels": [],
       "body": "Hi,\r\nCurrently an array which holds the salt and an unblinded claim has different forms depending on whether is contains array or non-array values. Nested disclosures require potentially different combinations of disclosures.\r\n\r\nInstead, what if there was only exactly one location for the `_sd` claim array (usually at the root of the document), and the disclosure array always had the following always consistent form:\r\n\r\n- salt\r\n- claim path from the location of the parent of the `_sd` claim of the JWT\r\n- value\r\n\r\nFor example:\r\n[\"r0mhd7LctwDCTXF_YfvV0g\", [\"family_name\"], \"M\u00f6bius\"]\r\n[\"uKp1B0jI2Ezmuo8EaNRG2Q\", [\"nationalities\",\"...\"], \"FR\"]\r\n[\"CTCthBCyHMuDlXF9qtY6TA\", [\"address\",\"postcode\"], \"EC1\"]\r\n\r\nWhere `family_name` is a peer to the _sd claim array portion of the JWT,\r\n`nationalities` is to `_sd`, and \"...\" indicates this is one value in the array, and\r\n`postcode` is an element inside `address`, which is a peer to `_sd`.",
       "createdAt": "2023-10-23T23:51:38Z",
-      "updatedAt": "2023-10-25T18:05:25Z",
+      "updatedAt": "2023-10-27T19:11:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -9073,9 +9080,16 @@
         {
           "author": "danielfett",
           "authorAssociation": "MEMBER",
-          "body": "Hi Rohan,\r\n\r\nI think the order of elements is important generally and especially in the case shown in my previous comment - omitting it can quickly lead to ambiguous encodings.\r\n\r\nRegarding the hash check: The current design avoids a major footgun! Of course, anybody who writes an SD-JWT implementation for just one use case can skip the hash check. However, it is very hard (or impossible?) to write a generic library supporting the current design while skipping the hash check. This is the beauty of the approach. With the pointer-based approach, nobody needs to check any hash. (I know that is easy to say \"but this is a security spec, everybody should care and whoever doesn't care is just careless!\" but that is not how the world works. Mistakes that can be made will be made; it is better to make making mistakes hard.)\r\n\r\nRegarding the size of presentations, an example can be found in the specification in [Section 7.3](https://drafts.oauth.net/oauth-selective-disclosure-jwt/draft-ietf-oauth-selective-disclosure-jwt.html#section-7.3): If `address` is not to be disclosed, only this data needs to be sent:\r\n\r\n```json\r\n{\r\n  \"_sd\": [\r\n    \"HvrKX6fPV0v9K_yCVFBiLFHsMaxcD_114Em6VT8x1lg\"\r\n  ],\r\n  \"iss\": \"https://issuer.example.com\",\r\n  \"iat\": 1683000000,\r\n  \"exp\": 1883000000,\r\n  \"sub\": \"6c5c0a49-b589-431d-bae7-219122a9ec2c\",\r\n  \"_sd_alg\": \"sha-256\"\r\n}\r\n```\r\n\r\nNote that this contains only one disclosure digest. Only if `address` is to be disclosed, the respective disclosure needs to be sent containing digests of further disclosures, as shown in the spec.",
+          "body": "Hi Rohan,\r\n\r\nI think the order of elements is important generally and especially in the case shown in my previous comment - omitting it can quickly lead to ambiguous encodings.\r\n\r\nRegarding the hash check: The current design avoids a major footgun! Of course, anybody who writes an SD-JWT implementation for just one use case can skip the hash check. However, it is very hard (or impossible?) to write a generic library supporting the current design while skipping the hash check. This is the beauty of the approach. With the pointer-based approach, nobody needs to check any hash. (I know that is easy to say \"but this is a security spec, everybody should be cautious and whoever doesn't is just careless!\" but that is not how the world works. Mistakes that can be made will be made; it is better to make making mistakes hard.)\r\n\r\nRegarding the size of presentations, an example can be found in the specification in [Section 7.3](https://drafts.oauth.net/oauth-selective-disclosure-jwt/draft-ietf-oauth-selective-disclosure-jwt.html#section-7.3): If `address` is not to be disclosed, only this data needs to be sent:\r\n\r\n```json\r\n{\r\n  \"_sd\": [\r\n    \"HvrKX6fPV0v9K_yCVFBiLFHsMaxcD_114Em6VT8x1lg\"\r\n  ],\r\n  \"iss\": \"https://issuer.example.com\",\r\n  \"iat\": 1683000000,\r\n  \"exp\": 1883000000,\r\n  \"sub\": \"6c5c0a49-b589-431d-bae7-219122a9ec2c\",\r\n  \"_sd_alg\": \"sha-256\"\r\n}\r\n```\r\n\r\nNote that this contains only one disclosure digest. Only if `address` is to be disclosed, the respective disclosure needs to be sent containing digests of further disclosures, as shown in the spec.",
           "createdAt": "2023-10-25T18:05:24Z",
-          "updatedAt": "2023-10-25T18:05:24Z"
+          "updatedAt": "2023-10-26T11:52:03Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There are undoubtedly at least a few different viable approaches and inevitably each will have its own set of advantages and disadvantages. There will always be some tradeoffs and there are bound to be varying preferences amongst different people. The general approach in the current WG draft has been stable for a while now though. And is being used. So significant changes at this stage would need really compelling reasons and even working group consensus.",
+          "createdAt": "2023-10-27T19:11:18Z",
+          "updatedAt": "2023-10-27T19:11:18Z"
         }
       ]
     },
@@ -34710,7 +34724,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-08-08T06:54:49Z",
-      "updatedAt": "2023-08-24T08:10:27Z",
+      "updatedAt": "2023-10-27T10:06:03Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "b5875fa808c3ea99925a1f5639e63e17561e6ff8",
@@ -34765,7 +34779,7 @@
       "labels": [],
       "body": "Noticed that the term was not explicitly defined so far.",
       "createdAt": "2023-08-09T08:06:58Z",
-      "updatedAt": "2023-08-28T10:58:20Z",
+      "updatedAt": "2023-10-27T10:06:00Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "b5875fa808c3ea99925a1f5639e63e17561e6ff8",
@@ -34820,7 +34834,7 @@
       "labels": [],
       "body": "This fixes Issue #333.",
       "createdAt": "2023-08-28T11:26:50Z",
-      "updatedAt": "2023-08-29T15:50:36Z",
+      "updatedAt": "2023-10-27T10:05:53Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "775801cdce9399db10b7a2219ce9f7f41e77f1c0",
@@ -34915,7 +34929,7 @@
       "labels": [],
       "body": "This fixes Issue #332.",
       "createdAt": "2023-08-28T11:35:03Z",
-      "updatedAt": "2023-08-29T16:09:08Z",
+      "updatedAt": "2023-10-27T10:05:50Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "98e46f09b6530c0897aa6202e467c43cc1028c9e",
@@ -34970,7 +34984,7 @@
       "labels": [],
       "body": "Fixes Issue #331 ",
       "createdAt": "2023-08-28T11:43:31Z",
-      "updatedAt": "2023-09-08T15:00:56Z",
+      "updatedAt": "2023-10-27T10:05:46Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "09a1d0b0a4568069ee22f33ca942c19babb90e00",
@@ -35257,7 +35271,7 @@
       "labels": [],
       "body": "In response to Issue #337:\r\n\r\n* Changed some words to ensure that the examples are not understood as an exhaustive list of possible structures\r\n* Added note on non-normativity of examples\r\n* Removed the word Option in the section titles and the numbers to avoid the notion of an exhaustive list of options",
       "createdAt": "2023-09-08T07:41:42Z",
-      "updatedAt": "2023-10-02T15:48:20Z",
+      "updatedAt": "2023-10-27T10:05:44Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "09a1d0b0a4568069ee22f33ca942c19babb90e00",
@@ -35733,7 +35747,7 @@
       "labels": [],
       "body": "To fix Issue #290, this PR reorganizes what was previously section 5 as follows:\r\n\r\n![Screenshot_20231004_144710](https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/89476/0c3fab16-e957-4ff3-acc0-3cd0691903e4)\r\n",
       "createdAt": "2023-10-04T12:27:14Z",
-      "updatedAt": "2023-10-23T15:13:20Z",
+      "updatedAt": "2023-10-27T10:05:30Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "f7fdcf0d35b02f6d1f6e9dbfc98eec56fa842a2d",
@@ -36560,7 +36574,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-10-17T12:23:39Z",
-      "updatedAt": "2023-10-23T04:34:25Z",
+      "updatedAt": "2023-10-27T10:05:32Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "f7fdcf0d35b02f6d1f6e9dbfc98eec56fa842a2d",
@@ -36628,7 +36642,7 @@
       "labels": [],
       "body": "Fixes Issue #346 \r\n\r\nLet's discuss whether we want to make the hash REQUIRED, OPTIONAL or RECOMMENDED. Current text is for REQUIRED. I'm leaning towards that in order to reduce optionality. It also means that there will be less situations where a Verifier accidentally accepts a KB-JWT without the hash (and we don't need to discuss mitigations against that).",
       "createdAt": "2023-10-17T14:33:38Z",
-      "updatedAt": "2023-10-23T16:08:10Z",
+      "updatedAt": "2023-10-27T10:06:10Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "4b9a228b32dde8516bb9e0f814508fe5ca92cd8a",
@@ -37407,6 +37421,46 @@
               "updatedAt": "2023-10-23T15:52:17Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 361,
+      "id": "PR_kwDOHTmVzM5d9GHq",
+      "title": "Reset branch for example generation",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/361",
+      "state": "OPEN",
+      "author": "danielfett",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-10-27T10:01:14Z",
+      "updatedAt": "2023-10-27T18:39:29Z",
+      "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "baseRefName": "master",
+      "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
+      "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "headRefName": "danielfett/reset-branch",
+      "headRefOid": "de222e32d9fa6dac776963cb5e45d2ef898358b7",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5ldkiB",
+          "commit": {
+            "abbreviatedOid": "de222e3"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "see that https://github.com/openwallet-foundation-labs/sd-jwt-python/pull/8 was merged so this seems good ",
+          "createdAt": "2023-10-27T17:28:00Z",
+          "updatedAt": "2023-10-27T18:39:29Z",
+          "comments": []
         }
       ]
     }
