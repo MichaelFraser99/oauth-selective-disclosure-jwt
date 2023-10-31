@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-29T00:54:21.720579+00:00",
+  "timestamp": "2023-10-31T00:51:50.828104+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -8989,10 +8989,12 @@
       "author": "danielfett",
       "authorAssociation": "MEMBER",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "editorial"
+      ],
       "body": "There is a subsection called \"Holder Public Key Claim\" that talks about the holder's public key. However, we usually now call this \"Key Binding\". \r\n\r\nWe should modify that subsection to more generally talk about the key binding (public) key, but it would be fine to mention that this could be used for holder binding.",
       "createdAt": "2023-10-17T12:58:05Z",
-      "updatedAt": "2023-10-17T12:58:05Z",
+      "updatedAt": "2023-10-30T09:05:24Z",
       "closedAt": null,
       "comments": []
     },
@@ -9032,11 +9034,12 @@
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [
+        "editorial",
         "ready-for-PR"
       ],
       "body": "There are various sentences like:\r\n\r\n> When Key Binding is not enforced, any entity in possession of an SD-JWT Presentation can forward the contents to third parties\r\n\r\nwhere presentation has a capital P as if it's a defined term. Probably it should have an actual definition (I can't find one) but if not it should probably be lower cased?",
       "createdAt": "2023-10-23T14:06:47Z",
-      "updatedAt": "2023-10-23T15:58:18Z",
+      "updatedAt": "2023-10-30T09:05:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -9102,10 +9105,12 @@
       "author": "rohan-wire",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "editorial"
+      ],
       "body": "Hi,\r\n\r\nDisclosure is used at least two ways in the document.\r\n\r\n- to refer to the array containing the salt, (maybe name), and value.\r\n- to refer to the base64url encoded string \r\n\r\nIt's easy to understand how this could have happened, as both contain logically the same information. I propose explicitly calling these:\r\n\r\n- **disclosure array**, and \r\n- **disclosure presentation**\r\n\r\nI also propose calling the hash/digest of the disclosure the **disclosure digest** in full in every use. The only time we would use \"disclosure\" without one of these modifiers is talking about the process of disclosing in general.\r\n\r\nAs for the plaintext of the claims that can be disclosed, I propose **blinded claim**.\r\n\r\nSo the first paragraph of Section 4.1 would read:\r\n\r\nAn SD-JWT consists of:\r\n\r\n- a signed JSON document, \r\n- a list of _disclosure presentations_ (each of which reveals a _blinded claim_), and \r\n- optionally an _issuer key binding_ (discussed in Section 4.3). \r\n\r\nThe signed JSON document (the JWT body) contains plaintext claims; and _disclosure digests_, each of which either refers to a specific _blinded claim_ or is a _decoy_. The holder can include zero or more disclosure presentations without breaking the signature of the JWT body. The contents of the blinded claims cannot be modified, because the corresponding digest would no longer match any digest in the JWT body. Blinded claims can be individual object properties (key-value pairs) or array elements.",
       "createdAt": "2023-10-24T12:42:33Z",
-      "updatedAt": "2023-10-25T21:36:36Z",
+      "updatedAt": "2023-10-30T09:06:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -9134,11 +9139,19 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Saying something about matching the strength of hash function and signature algorithm would probably be worthwhile. \r\n\r\nresulting from this thread https://mailarchive.ietf.org/arch/msg/oauth/liu4pJP0_p0O3xJCXkcadl8uNAk/ / https://mailarchive.ietf.org/arch/msg/oauth/UJQVtWdV4Woz0oDDEM9z82zgByE/ etc ",
+      "body": "Saying something about matching the strength of hash function and signature algorithm would probably be worthwhile. \r\n\r\nresulting from this thread https://mailarchive.ietf.org/arch/msg/oauth/liu4pJP0_p0O3xJCXkcadl8uNAk/ / https://mailarchive.ietf.org/arch/msg/oauth/UJQVtWdV4Woz0oDDEM9z82zgByE/ etc \r\n\r\n\"... indicates that the security strength of the signature scheme is bounded by the collision resistance of the hash function - e.g. there\u2019s little point using ES512 with SHA-256, for example. Probably the security considerations should suggest matching hash functions to signature algorithms.\" ",
       "createdAt": "2023-10-25T20:16:23Z",
-      "updatedAt": "2023-10-25T21:05:07Z",
+      "updatedAt": "2023-10-30T17:43:05Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "How to actually write this in an appropriate way for a draft RFC feels kinda tricky though. JWE has some text about using [Using Matching Algorithm Strengths](https://datatracker.ietf.org/doc/html/rfc7516#section-11.3) that I was hopping to borrow from but the context is (unsurprisingly) different enough that using text straight from it doesn't quite work. Maybe adding a very general statement in [Choice of a Hash Algorithm](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-choice-of-a-hash-algorithm) would be sufficient. ",
+          "createdAt": "2023-10-30T17:43:05Z",
+          "updatedAt": "2023-10-30T17:43:05Z"
+        }
+      ]
     },
     {
       "number": 360,
@@ -37119,7 +37132,7 @@
       "labels": [],
       "body": "Addresses Issue #342 \r\n\r\nInstead of just adding text re the key binding keys, I rewrote the whole section, as the previous one was more of a placeholder.",
       "createdAt": "2023-10-17T15:21:29Z",
-      "updatedAt": "2023-10-23T15:56:00Z",
+      "updatedAt": "2023-10-30T19:04:12Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "f7fdcf0d35b02f6d1f6e9dbfc98eec56fa842a2d",
@@ -37419,6 +37432,146 @@
               "body": "I think your argument is that the example I give above still does not prevent issuer/verifier unlinkability in sd-jwt because the user's public key becomes the correlation factor, which I think needs to be explicitly stated",
               "createdAt": "2023-10-23T15:52:17Z",
               "updatedAt": "2023-10-23T15:52:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnUJU",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T18:16:27Z",
+          "updatedAt": "2023-10-30T18:16:28Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "mechanically I think there are 2 things that are trying to fit into a single sentence about \"Issuer/Verifier unlinkability\" here:\r\n\r\n1. phone home / issuer's learning when a specific credential is presented (this is timing of presentation, assumes presentations leak information about credentials)\r\n2. tracking / fingerprinting of the subject by the issuer.\r\n\r\nThe first is mitigated partially by heard privacy.\r\nThe second requires the issuer not to assign or hide correlation capable identifiers.... and even the signature is such an identifier.\r\n\r\nI suggest starting by just writing out the behaviors you want to see, and don't want to see... and then don't give the same name to multiple behaviors.\r\n\r\n ",
+              "createdAt": "2023-10-30T18:16:27Z",
+              "updatedAt": "2023-10-30T18:17:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lndcy",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T18:40:14Z",
+          "updatedAt": "2023-10-30T18:40:15Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "imo the threat is about distinguishability, it has to do with the anonymity set of the data subject... You might find t-closenss / or similar concepts helpful. https://en.wikipedia.org/wiki/T-closeness\r\n\r\nIssuer / Verifier: Issuers are distinguishable, Subjects are distinguishable (signature correlation), Holders are not distinguishable (batch issuance).\r\n\r\nVerifier / Verifier: Issuers are distinguishable, Subjects are not distinguishable (linked secret), Holders are not distinguishable (zkp).\r\n\r\nIn all cases, we assume multiple verifiers process presentations and are compromised, and then we evaluate the damage done to data subjects.\r\n\r\n",
+              "createdAt": "2023-10-30T18:40:14Z",
+              "updatedAt": "2023-10-30T18:40:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnhE7",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T18:47:03Z",
+          "updatedAt": "2023-10-30T18:47:03Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": ".... what I said above is not right... I think \"Issuer / Verifier\" unlinkability is a bad name... I think the security property we care about there is timing / metadata analysis.",
+              "createdAt": "2023-10-30T18:47:03Z",
+              "updatedAt": "2023-10-30T18:47:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnkb8",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T18:56:07Z",
+          "updatedAt": "2023-10-30T18:56:07Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "![Screen Shot 2023-10-30 at 1 53 04 PM](https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/8295856/9f03157d-d735-4012-bafb-9338f9a96cd4)\r\n\r\nNot sure if this helps, but the reason Issuer / Verifier Unlinkability is not achievable is the signature on the credential... batch issuance does not solve this, it just makes the attacker count unique signatures that are observed in issuers and verifiers.\r\n\r\n",
+              "createdAt": "2023-10-30T18:56:07Z",
+              "updatedAt": "2023-10-30T18:56:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnlct",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T18:58:39Z",
+          "updatedAt": "2023-10-30T18:58:39Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "I think these labels are possibly the wrong words to be using especially because \"verifier / verifier\" unlinkability seems stronger than issuer / verifier.... but is actually not.\r\n\r\n",
+              "createdAt": "2023-10-30T18:58:39Z",
+              "updatedAt": "2023-10-30T18:58:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnmCd",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T19:00:03Z",
+          "updatedAt": "2023-10-30T19:00:03Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Its possible that \"single use unlinkability\" and \"multiple use unlinkability\" might be better.",
+              "createdAt": "2023-10-30T19:00:03Z",
+              "updatedAt": "2023-10-30T19:00:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5lnnnL",
+          "commit": {
+            "abbreviatedOid": "12d6a6c"
+          },
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-10-30T19:04:12Z",
+          "updatedAt": "2023-10-30T19:04:12Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "The privacy pass architecture uses this language:\r\n\r\n>  These proofs, or tokens, are\r\n>  private in the sense that a given token cannot be linked to the\r\n>  protocol interaction where that token was initially issued.\r\n   \r\n- https://datatracker.ietf.org/doc/draft-ietf-privacypass-architecture/",
+              "createdAt": "2023-10-30T19:04:12Z",
+              "updatedAt": "2023-10-30T19:04:29Z"
             }
           ]
         }
