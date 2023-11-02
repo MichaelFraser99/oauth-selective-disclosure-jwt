@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-10-31T00:51:50.828104+00:00",
+  "timestamp": "2023-11-02T00:51:26.462520+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -8919,7 +8919,7 @@
       ],
       "body": "Considering an SD-JWT-aware processor that also processes non-SD JWTs, there seem to be multiple ways to determine whether SD processing should be performed and I wonder if this needs clarification.\r\n\r\n- If the `typ` contains an `sd-jwt` component, ie. it is `SD-JWT` or `myapp+sd-jwt+json` or `application/sd-jwt`, then I believe the credential MUST be assumed to be SD-JWT. In the compact serialization, should the absence of a tilde make the input invalid?\r\n\r\n- If the compact serialization contains a tilde and the `typ` is ambiguous/unknown: should SD-JWT be assumed? What if the prover adds a tilde to the end of a traditional JWT? In that case it is unlikely that the JWT contains `_sd`, `_sd_alg`, or `...` claims, but not impossible either.\r\n\r\nApologies if this is covered and I missed it.",
       "createdAt": "2023-09-28T20:05:28Z",
-      "updatedAt": "2023-10-12T16:45:19Z",
+      "updatedAt": "2023-10-31T17:03:09Z",
       "closedAt": null,
       "comments": [
         {
@@ -8942,6 +8942,13 @@
           "body": "I spoke to Torsten a bit about this yesterday.\r\n\r\nI think my issue is mainly with a hostile prover, who does not have to send the correct content-type (if there is a place to put one) and can change the token. If the holder strips off any disclosures, the trailing tilde, and optional KB-JWT, the result is still a valid JWT and the signature would verify, although the token might have some strange claims such as `_sd` and `{\"...\": hash}`. Conversely, the holder could take a traditional JWT and add a tilde, potentially triggering SD-JWT processing (although I can't see any concrete risk here).\r\n\r\nFor me, the best way to resolve this ambiguity would be to modify the signing procedure for an SD-JWT such that the signature would NOT match that of a corresponding JWT, likely by adding something to the plaintext, thus requiring the verifier to be informed about which type of token they are processing.\r\n\r\nOtherwise, I believe that adding a standard claim in the SD-JWT protected header could help prevent confusion (`\"_sd\": true` for example).",
           "createdAt": "2023-10-12T16:45:19Z",
           "updatedAt": "2023-10-12T16:45:19Z"
+        },
+        {
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "hostile prover cannot change the `typ` value in the header of an issuer-signed JWT, so if the issuer issued it with `\"typ\": \"sd+jwt\"`, the verifier will be able to detect it. ",
+          "createdAt": "2023-10-31T17:03:09Z",
+          "updatedAt": "2023-10-31T17:03:09Z"
         }
       ]
     },
@@ -8994,9 +9001,17 @@
       ],
       "body": "There is a subsection called \"Holder Public Key Claim\" that talks about the holder's public key. However, we usually now call this \"Key Binding\". \r\n\r\nWe should modify that subsection to more generally talk about the key binding (public) key, but it would be fine to mention that this could be used for holder binding.",
       "createdAt": "2023-10-17T12:58:05Z",
-      "updatedAt": "2023-10-30T09:05:24Z",
+      "updatedAt": "2023-10-31T13:40:56Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "rohan-wire",
+          "authorAssociation": "NONE",
+          "body": "> There is a subsection called \"Holder Public Key Claim\" that talks about the holder's public key. However, we usually now call this \"Key Binding\".\r\n> \r\n> We should modify that subsection to more generally talk about the key binding (public) key, but it would be fine to mention that this could be used for holder binding.\r\n\r\nA lot of folks are used to primarily using JWTs with symmetric keys, therefore they might be equally likely to expect an issuer binding as a holder binding. I think it is good to spell this out explicitly in section headings and in the first use of Key Binding.",
+          "createdAt": "2023-10-31T13:40:55Z",
+          "updatedAt": "2023-10-31T13:40:55Z"
+        }
+      ]
     },
     {
       "number": 355,
@@ -9168,6 +9183,30 @@
       "updatedAt": "2023-10-25T21:04:49Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 363,
+      "id": "I_kwDOHTmVzM51c0JS",
+      "title": "Ambiguous what to do if same digest appears more than once",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/363",
+      "state": "CLOSED",
+      "author": "rohan-wire",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The spec currently does not define what to do if the same digest value appears more than once in an SD-JWT. This could be the case if the Issuer or Holder is operating maliciously.\r\n\r\nSome possible approaches:\r\n\r\n- first digest in the document wins (in the order presented in the document)\r\n- first digest in the document wins (all map keys sorted lexically)\r\n- ignore the digest\r\n- the entire document is invalid\r\n\r\nProposal:\r\nHolders and Verifiers receiving an SD-JWT have to scan all digests in all _sd element at any level of the document to check for duplicates. If the same digest appears more than once, the entire document is invalid. This prevents an attack where the Issuer gets the Holder to request an innocuous claim inside in a private claim with the same name as a more valuable claim, and includes this digest where it has a different meaning (perhaps offering an `x5c` or `aud` claim at the root level.",
+      "createdAt": "2023-10-31T13:34:19Z",
+      "updatedAt": "2023-10-31T13:43:33Z",
+      "closedAt": "2023-10-31T13:43:32Z",
+      "comments": [
+        {
+          "author": "rohan-wire",
+          "authorAssociation": "NONE",
+          "body": "Duplicate issue to #355 . Closing.",
+          "createdAt": "2023-10-31T13:43:33Z",
+          "updatedAt": "2023-10-31T13:43:33Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -37613,6 +37652,46 @@
           "body": "see that https://github.com/openwallet-foundation-labs/sd-jwt-python/pull/8 was merged so this seems good ",
           "createdAt": "2023-10-27T17:28:00Z",
           "updatedAt": "2023-10-27T18:39:29Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 362,
+      "id": "PR_kwDOHTmVzM5eO1Sd",
+      "title": "Update change controller for the Structured Syntax Suffix registration",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/362",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Update change controller for the Structured Syntax Suffix registration from IESG to IETF per IANA suggestion",
+      "createdAt": "2023-10-31T13:11:54Z",
+      "updatedAt": "2023-10-31T16:45:13Z",
+      "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "baseRefName": "master",
+      "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
+      "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "headRefName": "iana-iesg-to-ietf",
+      "headRefOid": "3a306a0cfc08a7661f2416b29af1bd6fe529f79c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5lu56P",
+          "commit": {
+            "abbreviatedOid": "3a306a0"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-10-31T16:45:13Z",
+          "updatedAt": "2023-10-31T16:45:13Z",
           "comments": []
         }
       ]
