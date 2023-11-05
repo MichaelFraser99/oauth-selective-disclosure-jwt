@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-02T00:51:26.462520+00:00",
+  "timestamp": "2023-11-05T00:55:30.500569+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -9207,6 +9207,22 @@
           "updatedAt": "2023-10-31T13:43:33Z"
         }
       ]
+    },
+    {
+      "number": 365,
+      "id": "I_kwDOHTmVzM510WE-",
+      "title": "typ:example+sd-jwt everywhere?",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/365",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Do we want the header `\"typ\":\"example+sd-jwt\"` in every example? I'm honestly not sure but wanted to ask b/c that looks like it's going to be the result from https://github.com/openwallet-foundation-labs/sd-jwt-python/pull/10 upstream. ",
+      "createdAt": "2023-11-03T17:40:08Z",
+      "updatedAt": "2023-11-03T17:40:08Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -37668,13 +37684,13 @@
       "labels": [],
       "body": "Update change controller for the Structured Syntax Suffix registration from IESG to IETF per IANA suggestion",
       "createdAt": "2023-10-31T13:11:54Z",
-      "updatedAt": "2023-10-31T16:45:13Z",
+      "updatedAt": "2023-11-03T15:02:23Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
       "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "headRefName": "iana-iesg-to-ietf",
-      "headRefOid": "3a306a0cfc08a7661f2416b29af1bd6fe529f79c",
+      "headRefOid": "61b689863c494a1afffceeb69ed64b94f666f825",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -37684,17 +37700,163 @@
         {
           "id": "PRR_kwDOHTmVzM5lu56P",
           "commit": {
-            "abbreviatedOid": "3a306a0"
+            "abbreviatedOid": "61b6898"
           },
           "author": "Sakurann",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2023-10-31T16:45:13Z",
-          "updatedAt": "2023-10-31T16:45:13Z",
+          "updatedAt": "2023-11-03T14:16:36Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5l_Hy6",
+          "commit": {
+            "abbreviatedOid": "071f5a4"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-02T18:57:20Z",
+          "updatedAt": "2023-11-02T18:57:20Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Well, that didn't work. Apparently I don't understand the github workflow/action build process well enough. ",
+              "createdAt": "2023-11-02T18:57:20Z",
+              "updatedAt": "2023-11-02T18:57:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mAbrD",
+          "commit": {
+            "abbreviatedOid": "071f5a4"
+          },
+          "author": "c2bo",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-02T23:11:54Z",
+          "updatedAt": "2023-11-02T23:11:54Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "The dependencies (like mmark) seem to be installed in the docker container of the github action -> You would need to modify the action version to switch to an older mmark version from what I understand?",
+              "createdAt": "2023-11-02T23:11:54Z",
+              "updatedAt": "2023-11-02T23:11:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mAkmY",
+          "commit": {
+            "abbreviatedOid": "071f5a4"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-02T23:46:17Z",
+          "updatedAt": "2023-11-02T23:46:17Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Maybe? I'm honestly not sure how to do that or even which action or how/if its versioned. \r\n\r\nhttps://github.com/martinthomson/i-d-template/pull/412/files is the change to action/Dockerfile in the martinthomson/i-d-template FWIW. \r\n\r\nI was just trying for quick workaround here though. And chasing down the main issue later. But maybe a quick workaround isn't doable. ",
+              "createdAt": "2023-11-02T23:46:17Z",
+              "updatedAt": "2023-11-02T23:46:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mFFCC",
+          "commit": {
+            "abbreviatedOid": "071f5a4"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-03T12:49:35Z",
+          "updatedAt": "2023-11-03T12:49:35Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I think you're right and I just need to figure out how to do that. Going to take this out in the meantime tho. ",
+              "createdAt": "2023-11-03T12:49:35Z",
+              "updatedAt": "2023-11-03T12:49:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mFW3m",
+          "commit": {
+            "abbreviatedOid": "071f5a4"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-03T13:29:11Z",
+          "updatedAt": "2023-11-03T13:29:11Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I clearly have no idea what I'm doing ... :( ",
+              "createdAt": "2023-11-03T13:29:11Z",
+              "updatedAt": "2023-11-03T13:29:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mFaO-",
+          "commit": {
+            "abbreviatedOid": "6a13197"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-03T13:36:11Z",
+          "updatedAt": "2023-11-03T13:36:11Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "that doesn't work as i'd naively hoped either ",
+              "createdAt": "2023-11-03T13:36:11Z",
+              "updatedAt": "2023-11-03T13:36:11Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 364,
+      "id": "PR_kwDOHTmVzM5ejDN5",
+      "title": "redo some list indentations to work with mmark 2.2.40",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/364",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "These are two lists that had indentation changed and I think they look ok:\r\n\r\nhttps://drafts.oauth.net/oauth-selective-disclosure-jwt/mmark-40-lists/draft-ietf-oauth-selective-disclosure-jwt.html#name-verification-and-processing \r\n\r\nhttps://drafts.oauth.net/oauth-selective-disclosure-jwt/mmark-40-lists/draft-ietf-oauth-selective-disclosure-jwt.html#name-verification-by-the-verifie",
+      "createdAt": "2023-11-03T15:02:58Z",
+      "updatedAt": "2023-11-03T15:11:24Z",
+      "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "baseRefName": "master",
+      "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
+      "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "headRefName": "mmark-40-lists",
+      "headRefOid": "e005a846f0275c6a3339825314f0845b5ed28c4a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
