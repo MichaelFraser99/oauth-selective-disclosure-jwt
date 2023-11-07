@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-05T00:55:30.500569+00:00",
+  "timestamp": "2023-11-07T00:52:47.379526+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -109,7 +109,7 @@
       "comments": [
         {
           "author": "tlodderstedt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Can you please also add an example of a W3C compatible JWT Verifiable Presentation?",
           "createdAt": "2022-06-08T13:29:26Z",
           "updatedAt": "2022-06-08T13:29:42Z"
@@ -882,7 +882,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "the use of escaped JSON  in the current approach avoids canonicalization tho ",
           "createdAt": "2022-06-13T14:13:16Z",
           "updatedAt": "2022-06-13T14:13:16Z"
@@ -903,7 +903,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "the input into the hash needs to be normalized ",
           "createdAt": "2022-06-13T16:22:40Z",
           "updatedAt": "2022-06-13T16:22:40Z"
@@ -1029,7 +1029,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "SD-JWT should disallow alg=none.\r\n\r\nAllowing the SVC (or whatever it becomes) to be unsigned is okay but can just be one chunk of base64url encoded JSON. \r\n",
           "createdAt": "2022-06-13T16:47:19Z",
           "updatedAt": "2022-06-13T16:47:19Z"
@@ -1043,14 +1043,14 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "I think that when the R part of an SD-JWT-R is unsigned, it's just an encoded JSON object. ",
           "createdAt": "2022-06-16T13:59:27Z",
           "updatedAt": "2022-06-16T13:59:27Z"
         },
         {
           "author": "tlodderstedt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I'm not sure it is a good idea to go down the \"use an unsigned assertion instead of a plain object\" to solve that problem again. \r\n\r\nThe requirement at hand is to release a credential with selective disclosure in cases where there is no cryptographic holder binding. That might for example mean, the credential is bound to certain claims of the holder, e.g. name and dob. That is normal practise for a lot of credentials today in the real world (including diplomas) and it is the design used by the UE Covid Certificate. So I don't think it is an edge case. \r\n\r\nI suggest to come up with a technically sound solution that also does not give people a vector to attack our proposal.  A plain JSON object seems to be a reasonable solution. ",
           "createdAt": "2022-06-17T11:43:31Z",
           "updatedAt": "2022-06-17T11:43:31Z"
@@ -1064,7 +1064,7 @@
         },
         {
           "author": "tlodderstedt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I think, if we want unsigned releases, the release shall be a JSON object. If the release shall be signed, that same JSON Object could be the payload of a JWS aka a JWT. ",
           "createdAt": "2022-06-17T15:40:03Z",
           "updatedAt": "2022-06-17T15:40:03Z"
@@ -1193,7 +1193,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "The main mistake I have in mind is the verifier/receiver completely forgetting to do the hash calculation and comparison. Because the claim values are in the SVC thing outside the SD-JWT, an attacker can put whatever values there they please and the receiver/verifier will accept them, if the hashes aren't checked. This might seem like an unlikely occurrence but mistakes get made all the time. Even mistakes that might seem silly or like they shouldn't happen. Think back to my JWT talk at OSW :) ",
           "createdAt": "2022-06-08T17:37:28Z",
           "updatedAt": "2022-06-08T17:37:28Z"
@@ -1263,14 +1263,14 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "> Would there be any implications of sending private keys in SD-JWT-R?\r\n\r\nIt would be symmetric keys. One for each encrypted claim in the SD-JWT. The key is the disclosure mechanism and would be in place of the cleartext of the claim value in the current SVC structure. So I don't think there would be any additional implications than the current approach.  ",
           "createdAt": "2022-06-10T18:22:34Z",
           "updatedAt": "2022-06-10T18:22:34Z"
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "I'll try and put together an example to hopefully make the idea more concrete and easier to reason about and discuss.  ",
           "createdAt": "2022-06-10T18:27:09Z",
           "updatedAt": "2022-06-10T18:27:09Z"
@@ -1284,7 +1284,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Working with the same *raw* claim values from the [Example 1 - Flat SD-JWT](https://www.ietf.org/archive/id/draft-fett-oauth-selective-disclosure-jwt-00.html#name-example-1-flat-sd-jwt) \r\n```\r\n{\r\n  \"sub\": \"6c5c0a49-b589-431d-bae7-219122a9ec2c\",\r\n  \"given_name\": \"John\",\r\n  \"family_name\": \"Doe\",\r\n  \"email\": \"johndoe@example.com\",\r\n  \"phone_number\": \"+1-202-555-0101\",\r\n  \"address\": {\r\n    \"street_address\": \"123 Main St\",\r\n    \"locality\": \"Anytown\",\r\n    \"region\": \"Anystate\",\r\n    \"country\": \"US\"\r\n  },\r\n  \"birthdate\": \"1940-01-01\"\r\n}\r\n```\r\n\r\nAn SD-JWT payload where the claim values are encrypted (using JWE with dir + A128GCM) would look like this:\r\n\r\n```\r\n{\r\n  \"iss\": \"https://example.com/issuer\",\r\n  \"iat\": 1516239022,\r\n  \"exp\": 1516247022,\r\n  \"_sd\": {\r\n    \"sub\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..cV2hFOGObggjin8z.kUL8jXdYYuD5-BwiW8q9xzoHQvBWvNueI2eRFXEmXuEasIpV.tn8RpYzKqrxiy_NK_F-J0w\",\r\n    \"given_name\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..bTDF3Hk4nAX0BXnJ.2JBl2g.paUW9Ke3dmcnV19Om6MjGg\",\r\n    \"family_name\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..Ql9gAqzexvluo7p9.RK5q.7LFlsjNhFoCX3sBy0qyR7g\",\r\n    \"email\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..X44VMMQQFlzdMsoY.VB10p2ZHBBmJi7Aduy1JvuaelQ.HiPo_W4IqamZT7WU1YqMCA\",\r\n    \"phone_number\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..Sp9V2uFfT3I3PqAX.zdXKGs5--foh8F15qp1u.fuoYChpMugOiAudJHGVwjg\",\r\n    \"address\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..AI4SunVU0jY5wXF3.jWtiXP_B5R-Uzl03lH9KdPxPTMVn6jPZK71VusMUQNvnM5E0ZawVqdrkNKtXFfd20T-DBpJ8fot3gp_7aIj8h8Um8jQfui4aOfKq_Bu5cwJ5_mN-SnOoqg.8fLbHaBcARle6SikZg77-g\",\r\n    \"birthdate\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..fB5hiX7d2KhG5axC.Uhp3K_eTfvscEw.x4hDafN3Sdb7A-YuoO8cMg\"\r\n  }\r\n}\r\n```\r\n\r\nThe SD-JWT signed by the issuer looks like this:  \r\n\r\n`\r\neyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tL2lzc3VlciIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQ3MDIyLCJfc2QiOnsic3ViIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5jVjJoRk9HT2JnZ2ppbjh6LmtVTDhqWGRZWXVENS1Cd2lXOHE5eHpvSFF2Qld2TnVlSTJlUkZYRW1YdUVhc0lwVi50bjhScFl6S3FyeGl5X05LX0YtSjB3IiwiZ2l2ZW5fbmFtZSI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UjBOTkluMC4uYlRERjNIazRuQVgwQlhuSi4ySkJsMmcucGFVVzlLZTNkbWNuVjE5T202TWpHZyIsImZhbWlseV9uYW1lIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5RbDlnQXF6ZXh2bHVvN3A5LlJLNXEuN0xGbHNqTmhGb0NYM3NCeTBxeVI3ZyIsImVtYWlsIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5YNDRWTU1RUUZsemRNc29ZLlZCMTBwMlpIQkJtSmk3QWR1eTFKdnVhZWxRLkhpUG9fVzRJcWFtWlQ3V1UxWXFNQ0EiLCJwaG9uZV9udW1iZXIiOiJleUpoYkdjaU9pSmthWElpTENKbGJtTWlPaUpCTVRJNFIwTk5JbjAuLlNwOVYydUZmVDNJM1BxQVguemRYS0dzNS0tZm9oOEYxNXFwMXUuZnVvWUNocE11Z09pQXVkSkhHVndqZyIsImFkZHJlc3MiOiJleUpoYkdjaU9pSmthWElpTENKbGJtTWlPaUpCTVRJNFIwTk5JbjAuLkFJNFN1blZVMGpZNXdYRjMuald0aVhQX0I1Ui1VemwwM2xIOUtkUHhQVE1WbjZqUFpLNzFWdXNNVVFOdm5NNUUwWmF3VnFkcmtOS3RYRmZkMjBULURCcEo4Zm90M2dwXzdhSWo4aDhVbThqUWZ1aTRhT2ZLcV9CdTVjd0o1X21OLVNuT29xZy44ZkxiSGFCY0FSbGU2U2lrWmc3Ny1nIiwiYmlydGhkYXRlIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5mQjVoaVg3ZDJLaEc1YXhDLlVocDNLX2VUZnZzY0V3Lng0aERhZk4zU2RiN0EtWXVvTzhjTWcifX0.LH5_YlMoXceIRb2G5atmS5VlECm3YjldIUPMstq22nxfU31xxEqcW3c4L5RuqGl4YBID6vif5pjYlZ0zV-AEgQ\r\n`\r\n\r\nThe disclosure container (just made the name up and there's probably better names but it takes the place of the SVC) has the claim names and the base64url encoded key that is used to disclosure that claim value in the SD-JWT by decrypting it.   \r\n\r\n```\r\n{\r\n  \"_dc\": {\r\n    \"sub\": \"In-iH0S_HXDvzkoVxfpqvA\",\r\n    \"given_name\": \"YYBWLGytJx2B9QL9y4cfMA\",\r\n    \"family_name\": \"jPAuYX6B-KcGm3QaT9iQ9A\",\r\n    \"email\": \"Bdqe6gP2ojC1lPP_IT59qw\",\r\n    \"phone_number\": \"KxeODoPXouVBlZ6izB966A\",\r\n    \"address\": \"cnouoEo4q5V8gAeNli7Pjw\",\r\n    \"birthdate\": \"44Um0QD0R59RxqyCUWgXOA\"\r\n  }\r\n}\r\n```\r\n\r\nThe disclosure container base64url encoded:\r\n\r\n`\r\neyJfZGMiOnsic3ViIjoiSW4taUgwU19IWER2emtvVnhmcHF2QSIsImdpdmVuX25hbWUiOiJZWUJXTEd5dEp4MkI5UUw5eTRjZk1BIiwiZmFtaWx5X25hbWUiOiJqUEF1WVg2Qi1LY0dtM1FhVDlpUTlBIiwiZW1haWwiOiJCZHFlNmdQMm9qQzFsUFBfSVQ1OXF3IiwicGhvbmVfbnVtYmVyIjoiS3hlT0RvUFhvdVZCbFo2aXpCOTY2QSIsImFkZHJlc3MiOiJjbm91b0VvNHE1VjhnQWVObGk3UGp3IiwiYmlydGhkYXRlIjoiNDRVbTBRRDBSNTlSeHF5Q1VXZ1hPQSJ9fQ\r\n`\r\n\r\nAnd, same as the  approach in -00, the holder could present a subset of the disclosure container thereby doing the selective disclosing.  Like this would only disclose birthdate:\r\n\r\n```\r\n{\r\n  \"_dc\": {\r\n    \"birthdate\": \"44Um0QD0R59RxqyCUWgXOA\"\r\n  }\r\n}\r\n```\r\nEncoded: \r\n`eyJfZGMiOiB7ImJpcnRoZGF0ZSI6ICI0NFVtMFFEMFI1OVJ4cXlDVVdnWE9BIn19`\r\n\r\n\r\nIt's pretty similar in general to the approach in -00 but the disclosure container only has stuff needed to reveal/release the claim values rather than the values themselves and a detached integrity check as in the SVC. Which eliminates the possibility of relying on the claim values from the SVC while forgetting to to do the integrity check. And yes, as you point out, that check is fundamental. But mistakes like that do happen and have happened. And, so to the extent possible/reasonable, it's good if the protocol design can eliminate or reduce the possibility of making common mistakes.\r\n\r\nWith this proposed approach, the SD-JWT is bigger. And the disclosure container will be smaller than the SVC.\r\n\r\nIt could be something different but I used plain JWE for the encrypted values. Which has the benefit of reusing the JWE spec and concepts. And should mean that JWE libraries already have the code to process the stuff. So from that perspective, I don't actually think it would impact adoption and simplicity. In some ways, it's simpler. And algorithm agility comes \"for free\" from the JWE layer. \r\n\r\nJWE isn't the most space efficient. But it's not terrible. And there are some potential optimizations that could be looked at too, if desired. The likely redundant JWE header looks like a good candidate. But I digress for now... \r\n\r\nSome info about the size of the underlying data does maybe leak here (b/c the cipher text size will vary with the size of the plain text) vs. the hash. But I'm having a hard time seeing how that could be meaningfully consequential in this context. \r\n\r\n\r\n\r\n",
           "createdAt": "2022-06-10T23:39:46Z",
           "updatedAt": "2022-06-10T23:39:46Z"
@@ -1319,14 +1319,14 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "What I'm proposing is in no way more complicated. It is actually simpler in many respects. And avoids the awkward JSON in JSON a la #27.\r\n\r\nImplementation advice, warnings, test suites, certification suites, etc., have shown to be woefully insufficient and don't even reach the those that need it the most. \r\n\r\nNegligence would be continuing to ignore these kinds of very real problems resulting from fundamental spec choices while deferring to ineffective mitigations while blaming developers. \r\n\r\n",
           "createdAt": "2022-06-13T14:25:46Z",
           "updatedAt": "2022-06-13T14:25:46Z"
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "@PieterKas the current SVC has the value of claims fully in the clear. All of what you say applies (or doesn't) just the same to both approaches. But isn't an inherent or extra complexity of making things harder to mess up. ",
           "createdAt": "2022-06-13T14:32:17Z",
           "updatedAt": "2022-06-13T14:32:17Z"
@@ -1389,7 +1389,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "I did mention ciphertext size revealing info about plain text length but with, \"having a hard time seeing how that could be meaningfully consequential\" clearly didn't think too hard about some of the cases that have real implications. And was forgetting/ignoring that GCM wasn't a bock mode. ",
           "createdAt": "2022-06-15T14:27:25Z",
           "updatedAt": "2022-06-15T14:27:25Z"
@@ -1445,7 +1445,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "While trying to wrap my head around @danielfett's idea from the call last Friday I was inspired by the swapping of the placement of keys and ciphertexts and  stumbled on an approach that I think maybe does combine the advantages of the hash and encryption approaches. The idea is to use the authentication tag of a symmetric JWE similar to the hash value in the salted hash approach. Then include the rest of the JWE in the release container for each claim. For each released claim, the verifier appends the tag on the back of the rest of the JWE and decrypts to get the value. Because it's authenticated encryption, the decryption includes an integrity check. Treating the authenticated decryption as a single operation (which isn't strictly true but you'd have to go out of you way to separate them and mess it up) means the verifier cannot skip the tag/hash check while accessing the claim values. And the tags are under the signature of the SD-JWT. A bit more detail with examples follows.\r\n\r\nA symmetric encryption key is put in the `sd_tags` container of SD-JWT. Each claim value is JWE (symmetric AEAD) encrypted with the key and the authentication tag (the last part) is stripped off and placed as the value of the claim in the `sd_tags` container.  Conceptually in JSON:\r\n\r\n```\r\n{\r\n  \"sd_tags\": {\r\n    \"_key\": \"<base64url encoded symmetric encryption key>\",\r\n    \"sub\": \"<JWE authentication tag from encrypted sub>\",\r\n    \"email\": \"<JWE authentication tag from encrypted email>\",\r\n  }\r\n```\r\n\r\nThe releases container has each claim name and the associated JWE without the tag. Conceptually in JSON:\r\n\r\n```\r\n{\r\n  \"sd_release\": {\r\n    \"sub\": \"<JWE from encrypted sub without authentication tag>\",\r\n    \"email\": \"<JWE from encrypted email without authentication tag>\",\r\n  }\r\n}\r\n```\r\n\r\nWorking with the same raw claim values from the [Example 1 - Flat SD-JWT](https://www.ietf.org/archive/id/draft-fett-oauth-selective-disclosure-jwt-00.html#name-example-1-flat-sd-jwt) - an SD-JWT payload where the claim values are the JWE authentication tag would look like this:\r\n\r\n```\r\n{\r\n  \"iss\": \"https://example.com/issuer\",\r\n  \"iat\": 1516239022,\r\n  \"exp\": 1516247022,\r\n  \"sd_tags\": {\r\n    \"_key\": \"F4c66aQI4Qwf1Tcipct9sw\",\r\n    \"sub\": \"xS2kLH0Fc9wJbg5BvsaZsA\",\r\n    \"given_name\": \"RqzDHzn5ERa9hC47BzGPEQ\",\r\n    \"family_name\": \"g9lo2uNcWdmepNvtST4WuQ\",\r\n    \"email\": \"RHP8ky9Od5xUsQOSe_C-Mg\",\r\n    \"phone_number\": \"aNuk8EX_a3QN3c4Q2-oH2w\",\r\n    \"address\": \"rHUTycKpJ6Sz3qlYFhqe2w\",\r\n    \"birthdate\": \"rrXyxgQAOVCa367VVi3b1w\"\r\n  }\r\n}\r\n```\r\n\r\nThe SD-JWT signed by the issuer looks like this:\r\n\r\n`eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tL2lzc3VlciIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQ3MDIyLCJzZF90YWdzIjp7Il9rZXkiOiJGNGM2NmFRSTRRd2YxVGNpcGN0OXN3Iiwic3ViIjoieFMya0xIMEZjOXdKYmc1QnZzYVpzQSIsImdpdmVuX25hbWUiOiJScXpESHpuNUVSYTloQzQ3QnpHUEVRIiwiZmFtaWx5X25hbWUiOiJnOWxvMnVOY1dkbWVwTnZ0U1Q0V3VRIiwiZW1haWwiOiJSSFA4a3k5T2Q1eFVzUU9TZV9DLU1nIiwicGhvbmVfbnVtYmVyIjoiYU51azhFWF9hM1FOM2M0UTItb0gydyIsImFkZHJlc3MiOiJySFVUeWNLcEo2U3ozcWxZRmhxZTJ3IiwiYmlydGhkYXRlIjoicnJYeXhnUUFPVkNhMzY3VlZpM2IxdyJ9fQ.Mwbd8K6nrQ8clBbe-xFYGi3KofRO8cordH5pL0QPu41MPE2Ol75fzRFc6eGNLJobM3SmSJU9mW8T-PeDxMw70A\r\n`\r\n\r\nThe release container has the claim names and encrypted values omitting the tag (the first four parts of the JWE): \r\n\r\n```\r\n{\r\n  \"sd_release\": {\r\n    \"sub\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..2CPSJxfHXsIvdiXr.8SnXSG7i1G0RUBzCjkDpjmNCrZMASD44TG-sQgvr2G_xfB6L\",\r\n    \"given_name\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..Ux6LFw7GXlt14Pcn.ULtuGg\",\r\n    \"family_name\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..NfEty8WYlTuYLjqh.oLij\",\r\n    \"email\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..A1l60VKGahQKMoAz.S-MxvTsdVwcr0hov4c0i7Cd0EA\",\r\n    \"phone_number\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..Ye0-LAyu4t5eUuEr.NOQETMI6jkZasNHsSVTt\",\r\n    \"address\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..JV19LMhFt8pqnd_g.-apgQvHiTqmV2t9yFAMYDmIZOmALWM2ekcxkeQW9T5LfOOTW3tmYgcUtmd0mu2vA_jAr5lp6GVVFaxfWVceDUHooJnvFK96Mt3Kti-aombm7pTYTUCVhDw\",\r\n    \"birthdate\": \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4R0NNIn0..FQhkucvj2FcVWIwd.ll5yTiX8yN-7ig\"\r\n  }\r\n}\r\n```\r\nThe release container base64url encoded:\r\n\r\n`eyJzZF9yZWxlYXNlIjp7InN1YiI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UjBOTkluMC4uMkNQU0p4ZkhYc0l2ZGlYci44U25YU0c3aTFHMFJVQnpDamtEcGptTkNyWk1BU0Q0NFRHLXNRZ3ZyMkdfeGZCNkwiLCJnaXZlbl9uYW1lIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5VeDZMRnc3R1hsdDE0UGNuLlVMdHVHZyIsImZhbWlseV9uYW1lIjoiZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRSME5OSW4wLi5OZkV0eThXWWxUdVlManFoLm9MaWoiLCJlbWFpbCI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UjBOTkluMC4uQTFsNjBWS0dhaFFLTW9Bei5TLU14dlRzZFZ3Y3IwaG92NGMwaTdDZDBFQSIsInBob25lX251bWJlciI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UjBOTkluMC4uWWUwLUxBeXU0dDVlVXVFci5OT1FFVE1JNmprWmFzTkhzU1ZUdCIsImFkZHJlc3MiOiJleUpoYkdjaU9pSmthWElpTENKbGJtTWlPaUpCTVRJNFIwTk5JbjAuLkpWMTlMTWhGdDhwcW5kX2cuLWFwZ1F2SGlUcW1WMnQ5eUZBTVlEbUlaT21BTFdNMmVrY3hrZVFXOVQ1TGZPT1RXM3RtWWdjVXRtZDBtdTJ2QV9qQXI1bHA2R1ZWRmF4ZldWY2VEVUhvb0pudkZLOTZNdDNLdGktYW9tYm03cFRZVFVDVmhEdyIsImJpcnRoZGF0ZSI6ImV5SmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UjBOTkluMC4uRlFoa3VjdmoyRmNWV0l3ZC5sbDV5VGlYOHlOLTdpZyJ9fQ\r\n`\r\n\r\n\r\n",
           "createdAt": "2022-06-20T14:47:23Z",
           "updatedAt": "2022-06-27T21:49:36Z"
@@ -1466,14 +1466,14 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Agree that the JWE fiddling may be a bit tricky to communicate. But the actual fiddling operations are a string split for the issuer and a string concatenation for the verifier. So not particularly difficult. \r\n\r\nI should have anticipated the questioning of my magic abilities! :-D A separate \"sd_key\" claim would probably be better. \r\n",
           "createdAt": "2022-06-20T15:32:30Z",
           "updatedAt": "2022-06-20T15:32:30Z"
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Kinda, yeah. Keeping the ciphertext out of the SD-JWT removes the potential info leakage of the size of the ciphertext revealing info about the plaintext.  ",
           "createdAt": "2022-06-20T15:43:32Z",
           "updatedAt": "2022-06-20T15:43:32Z"
@@ -1501,7 +1501,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Some feedback was received second hand from a crypto expert at a company that has actual crypto experts - and they indicated the tag scheme is not going to work. If the attacker knows the key + tag, it's apparently not too difficult to forge a message with new ciphertext that authenticates against the same tag.  I was (apparently naively) thinking that the AEAD tag provides similar properties to a secure hash or hmac (one of the JWE constructions uses AES CBC + HMAC SHA2 to provide an AEAD, which influenced my thinking) - particularly something like second preimage resistance that would make such forgery infeasible - but sounds like my assumption there is wrong. ",
           "createdAt": "2022-07-01T21:04:42Z",
           "updatedAt": "2022-07-01T21:04:42Z"
@@ -2045,7 +2045,7 @@
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/59",
       "state": "CLOSED",
       "author": "tlodderstedt",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [
         "has-PR"
@@ -2057,7 +2057,7 @@
       "comments": [
         {
           "author": "tlodderstedt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I recommend use of raw public keys (JWKs) in this example. ",
           "createdAt": "2022-06-17T11:35:08Z",
           "updatedAt": "2022-06-17T11:35:08Z"
@@ -3600,7 +3600,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "I don't really know but suspect that one or just a few claim names being hidden still reveals quite a lot. The optionality is nice from some perspectives but also adds complexity in participants having to be able to handle both cases. I honestly don't know if obscuring the claim names is needed or legitimately valuable. But my sense is that it should be an all or nothing thing.  ",
           "createdAt": "2022-07-01T21:15:17Z",
           "updatedAt": "2022-07-01T21:15:17Z"
@@ -3999,7 +3999,7 @@
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "> It's subtle but this isn't exactly a type of JWT and the title 'Selective Disclosure JWT' is potentially misleading. The document is more defining some structures/claims for use in JWT that can (help) accomplish selective disclosure.  'Selective Disclosure with JWT' or 'Selective Disclosure for JWT' might be more appropriate.\r\n\r\n_Originally posted by @bc-pi in https://github.com/oauthstuff/draft-selective-disclosure-jwt/issues/60#issuecomment-1167782800_\r\n\r\nI have come across this also while preparing the presentation for IETF. I think 'Selective Disclosure for JWT' would make more sense than the current title.",
       "createdAt": "2022-07-14T09:42:13Z",
@@ -4008,7 +4008,7 @@
       "comments": [
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Concur (obviously). ",
           "createdAt": "2022-07-14T22:53:59Z",
           "updatedAt": "2022-07-14T22:53:59Z"
@@ -4373,14 +4373,14 @@
       "comments": [
         {
           "author": "OR13",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "```\r\n\"id\": \"did:jwk:894fa94hg10AOEe82\u2026#0\"\r\n```\r\n\r\nI wonder if these are `iss` or `kid` or both (as is the current example).",
           "createdAt": "2022-09-20T20:57:31Z",
           "updatedAt": "2022-09-20T20:57:31Z"
         },
         {
           "author": "OR13",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Do you even need canonicalization? are these serialized formats ever stored in a \"decoded\" form?\r\n\r\nFor example, in JWTs.\r\n\r\n{ header, payload, signature } is a fine way to store a token, if you are assured member ordering of header and payload are preserved, and whitespace is trimmed.\r\n\r\nIf you are worried about that, you store the entire thing encoded as a `jwt`... I don't know enough about sd-jwt, but its possible that cannonicalization can be accomplished in a \"light mode\" with normative statements, similar to the instructions for https://www.rfc-editor.org/rfc/rfc7638#section-3.2",
           "createdAt": "2022-09-20T21:02:32Z",
           "updatedAt": "2022-09-20T21:02:37Z"
@@ -4408,7 +4408,7 @@
         },
         {
           "author": "OR13",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Sometimes you can avoid escaping by translating... I've used https://www.npmjs.com/package/json-pointer do do selective disclosure with merkle proofs before... I would rather have JSON Pointer as a dependency than see escaped JSON payloads or have to manage transforms that were only defined in the sd-jwt spec.\r\n\r\n```ts\r\nimport pointer from 'json-pointer';\r\n\r\nconst objectToMessages = (obj: any) => {\r\n  const dict = pointer.dict(obj);\r\n  const messages = Object.keys(dict).map(key => {\r\n    return `{\"${key}\": \"${dict[key]}\"}`;\r\n  });\r\n  return messages;\r\n};\r\n\r\nconst messagesToObject = (messages: string[]) => {\r\n  const obj = {};\r\n  messages\r\n    .map(m => {\r\n      return JSON.parse(m);\r\n    })\r\n    .forEach(m => {\r\n      const [key] = Object.keys(m);\r\n      const value = m[key];\r\n      pointer.set(obj, key, value);\r\n    });\r\n  return obj;\r\n};\r\n\r\nexport { objectToMessages, messagesToObject };\r\n```\r\n\r\nThere are other approaches considered here: https://github.com/w3c-ccg/Merkle-Disclosure-2021/tree/main/packages/linked-data-proof/src/merkle/normalization\r\n\r\nConsider building blocks that are widely available in substitute for more normative spec definitions.",
           "createdAt": "2022-09-21T13:17:48Z",
           "updatedAt": "2022-09-21T13:22:19Z"
@@ -4443,7 +4443,7 @@
         },
         {
           "author": "OR13",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "> I'm not following - can you give an example how JSON pointers or the code above would solve the hashing problem?\r\n\r\nhttps://github.com/w3c-ccg/Merkle-Disclosure-2021/blob/main/packages/linked-data-proof/src/merkle/normalization/__tests__/json-pointer.test.ts\r\n\r\nhttps://github.com/transmute-industries/verifiable-data/tree/main/packages/merkle-proof#custom-hash-functions\r\n\r\nNormalize to a set of messages which are built from json pointer.\r\n\r\nThen use any multi-message scheme on those messages. (such as bbs+ signatures OR merkle set membership proofs)\r\n\r\nThats what we did to create merkle proofs for selective disclosure of object tree subsets.\r\n\r\n",
           "createdAt": "2022-09-21T21:48:31Z",
           "updatedAt": "2022-09-21T21:49:07Z"
@@ -4457,7 +4457,7 @@
         },
         {
           "author": "OR13",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I showed how to convert an object to a set of messages.\r\n\r\nYou would want to apply the blinding to the messages.\r\n\r\nThe approach I showed is similar in that it relies on JSON encoding as strings... and then selective disclosure of those strings... which is then converted back to a selectively disclosed object.\r\n\r\nJust sharing the approach, not sure how exactly it might map to sd-jwt.",
           "createdAt": "2022-09-22T17:19:20Z",
           "updatedAt": "2022-09-22T17:20:22Z"
@@ -4471,7 +4471,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "The aesthetics of the string values with escaped JSON are not great, at best. But it obviates the need to do c18n/normalization with a straightforward approach that doesn't come with other baggage. I believe the draft should do a better job explaining that rational but stick with the current approach.  ",
           "createdAt": "2022-09-23T20:52:29Z",
           "updatedAt": "2022-09-23T20:52:29Z"
@@ -4645,7 +4645,7 @@
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/165",
       "state": "CLOSED",
       "author": "bc-pi",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-01.html#section-5.8-3 \r\n\r\n\"For each claim, a JSON literal that decodes to an object with the and the claim value (plus optionally the claim name) is contained in the sd_hs_disclosures object.\" -> \"... decodes to an object with the *salt* and the claim value (plus ...\" or something about the salt I think. \r\n\r\n",
@@ -4669,7 +4669,7 @@
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/166",
       "state": "CLOSED",
       "author": "bc-pi",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-01.html#section-6.2-3.5.1 has, \"Validate the HS-Disclosures JWT: ... If Holder Binding is required, validate the signature over the SD-JWT using the same steps as for the SD-JWT plus the following steps:\", which can't be right with both mentions of SD-JWT.  \r\n\r\nFurthermore I'd strongly suggest that validation steps for the HS-Disclosures JWT be described independently.  Things like \"using the same steps as for the SD-JWT\" seem likely to lead to confusion and/or require extrapolation (which steps exactly? the issuer step above is kinda about the signature but not really needed in HS-Disclosures).  ",
@@ -4686,7 +4686,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "I'm sure this is no surprise but I'm very much in favor of moving in that direction, @Sakurann. It's a bigger scope than was intended by this issue. But is exactly where I was hoping the conversations in London this week would lead.  \r\n\r\nThe HS-DIsclosures object could drop the sd_hs_disclosures key too and have one less level of nesting (simpler and smaller). \r\n\r\ni.e. just,\r\n\r\n```\r\n{\r\n \"given_name\": \"{\\\"s\\\": \\\"6Ij7tM-a5iVPGboS5tmvVA\\\", \\\"v\\\": \\\"John\\\"}\",\r\n \"family_name\": \"{\\\"s\\\": \\\"Qg_O64zqAxe412a108iroA\\\", \\\"v\\\": \\\"Doe\\\"}\",\r\n \"address\": \"{\\\"s\\\": \\\"5bPs1IquZNa0hkaFzzzZNw\\\", \\\"v\\\": {\\\"street_address\\\": \\\"123 Main St\\\", \\\"locality\\\": \\\"Anytown\\\", \\\"region\\\": \\\"Anystate\\\", \\\"country\\\": \\\"US\\\"}}\"\r\n}\r\n```\r\n\r\nSimilarly, the Issuer-Issued Disclosures could do without the outer sd_ii_disclosures layer.  \r\n\r\n",
           "createdAt": "2022-11-07T14:53:05Z",
           "updatedAt": "2022-11-08T08:26:29Z"
@@ -4850,7 +4850,7 @@
         "bc-pi"
       ],
       "labels": [
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "Suggest we move this section lower, as with the new encoding approach I anticipate less questions regarding canonicalization, while this is a good clarification.\r\n\r\nhttps://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/174/files#r1028969018\r\n",
       "createdAt": "2022-11-22T18:52:06Z",
@@ -5532,7 +5532,7 @@
       "assignees": [],
       "labels": [
         "editorial",
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "This was removed from PR #195 ",
       "createdAt": "2023-01-10T12:05:27Z",
@@ -5800,7 +5800,7 @@
       ],
       "labels": [
         "editorial",
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "How relevant/useful to the reader is \"4. Concepts\" section?\r\n\r\nIf not, should it be removed? Should it be moved to Appendix?",
       "createdAt": "2023-01-31T16:42:49Z",
@@ -5926,7 +5926,7 @@
       ],
       "labels": [
         "editorial",
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "It should be use \"example.jp\" or \".example\" TLD instead.",
       "createdAt": "2023-02-17T00:11:23Z",
@@ -6934,7 +6934,7 @@
         "danielfett"
       ],
       "labels": [
-        "needs-PR"
+        "ready-for-PR"
       ],
       "body": "based on the feedback during the IIW session",
       "createdAt": "2023-04-25T15:41:33Z",
@@ -9223,6 +9223,54 @@
       "updatedAt": "2023-11-03T17:40:08Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 366,
+      "id": "I_kwDOHTmVzM52AcIQ",
+      "title": " rework \"Choice of a Hash Algorithm\" section ",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/366",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "from this thread https://mailarchive.ietf.org/arch/msg/oauth/5A1kXMNiIm2DBEcXCadCwUpMhgI/ Neil Madden has suggested the following for \"Choice of a Hash Algorithm\" section. I think (with maybe some minor tweaks) the text works and it would also address issue #359. \r\n\r\n> To ensure privacy of claims that are not being selectively disclosed in a given presentation, the hash function MUST ensure that it is infeasible to calculate the salt and claim name and value (or any portion thereof) that results in a particular digest. This implies the hash function MUST be preimage resistant, but should also not allow an observer to infer any partial information about the undisclosed content. In the terminology of cryptographic commitment schemes, the hash function MUST be computationally hiding.\r\n> \r\n> The hash function MUST be second-preimage resistant. For any salt and claim value pair, it is infeasible to find a different salt and claim value pair that result in the same digest.\r\n> \r\n> The hash function SHOULD also be collision resistant. Although not essential to the anticipated uses of SD-JWT, without collision resistance an Issuer may be able to find multiple disclosures that have the same hash value. The signature over the SD-JWT would not then commit the Issuer to the contents of the JWT, which is surprising. Where this is a concern, the collision resistance of the hash function SHOULD match the collision resistance of the hash function used by the signature scheme. For example, use of the ES512 signature algorithm would require a disclosure hash function with at least 256-bit collision resistance, such as SHA-512.\r\n\r\n\r\n\r\n\r\n\r\n",
+      "createdAt": "2023-11-06T18:39:58Z",
+      "updatedAt": "2023-11-06T18:39:58Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 367,
+      "id": "I_kwDOHTmVzM52ArSv",
+      "title": "stronger stance on selectively disclosable validity claims ",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/367",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "from this thread https://mailarchive.ietf.org/arch/msg/oauth/5A1kXMNiIm2DBEcXCadCwUpMhgI/ Neil Madden has suggested some text (below) for the [Selectively-Disclosable Validity Claims](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-selectively-disclosable-val) section.  I think we can replace and/or augment and/or merge what's there with this suggestion and arrive at something reasonable that's a bit stronger about not making claims that control the validity of the SD-JWT selectively disclosable. \r\n\r\n> \r\n> An Issuer MUST NOT allow any security-critical claim to be selectively disclosable. The exact list of \u201csecurity-critical\u201d claims will depend on the application, and SHOULD be listed by any application-specific profile of SD-JWT. The following is a list of standard claim names that SHOULD be considered as security-critical by any SD-JWT Issuer:\r\n> \r\n>  * \u201ciss\u201d (Issuer)\r\n>  * \u201caud\u201d (Audience), although issuers may want to allow individual entries in the array to be selectively-disclosable\r\n>  * \u201cexp\u201d (Expiration Time)\r\n>  * \u201cnbf\u201d (Not Before)\r\n>  * \u201ciat\u201d (Issued At)\r\n>  * \u201cjti\u201d (JWT ID)\r\n> \r\n> In addition, the \u201ccnf\u201d (Confirmation Key) claim MUST NOT be selectively disclosable.",
+      "createdAt": "2023-11-06T19:12:47Z",
+      "updatedAt": "2023-11-06T21:39:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 368,
+      "id": "I_kwDOHTmVzM52BabV",
+      "title": "contextualize verifier policy (or something like that) ",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/368",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In this thread https://mailarchive.ietf.org/arch/msg/oauth/SVXj_3sqcRT5o6S-f6NOATtK-ro/ is a discussion with Neil Madden that ultimately I interpret as being about how static a verifier's acceptance/validation policy has to be (especially with respect to key binding) and that the current draft can be read as prohibiting things like migration to a stricter policy over time. IMHO we don't want to unintentionally prohibit that kind of thing but absolutely need to keep general principle/requirement that a verifier have a validation policy that isn't unduly/unexpectedly influenced by the (sometimes attacker-controllable) content of the token. I'm not sure how to reasonably convey that in the context of the draft as it is. And don't want to make large changes for this. So this issue is a placeholder to look at small refinements to current text that could be perceived as too limiting/strict. And/or maybe adding a short new considerations section about verifier policy that explains that a policy isn't necessarily completely static.  ",
+      "createdAt": "2023-11-06T21:22:40Z",
+      "updatedAt": "2023-11-06T21:23:54Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -10597,7 +10645,7 @@
       "comments": [
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "What's the reasoning for `_sd_container` and `sd_container`? They are the same thing. Just in different contexts. ",
           "createdAt": "2022-06-13T11:12:01Z",
           "updatedAt": "2022-06-13T11:12:01Z"
@@ -10618,7 +10666,7 @@
         },
         {
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "body": "Aggregated and Distributed Claims are a rarely used corner of OIDC so calling that convention is a bit of an overstatement. Using an underscore as a halfhearted qualifier isn't really in the spirit of RFC7519's treatment of claim names either. \r\nUse an underscore if you want. But explain what it is supposed to mean. And register the claim. Don't assume it has special powers. ",
           "createdAt": "2022-06-13T14:41:20Z",
           "updatedAt": "2022-06-13T14:41:20Z"
@@ -10777,7 +10825,7 @@
             "abbreviatedOid": "cd6d387"
           },
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2022-06-14T16:16:59Z",
@@ -14028,7 +14076,7 @@
             "abbreviatedOid": "53c160f"
           },
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-07-12T18:55:07Z",
@@ -14048,7 +14096,7 @@
             "abbreviatedOid": "53c160f"
           },
           "author": "bc-pi",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-07-12T18:55:33Z",
@@ -18276,7 +18324,7 @@
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/167",
       "state": "MERGED",
       "author": "bc-pi",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "I know it's just the doc history but \"sd_digest_derivation_alg renamed to sd_digest_derivation_alg\" isn't a good look or helpful",
@@ -18335,7 +18383,7 @@
             "abbreviatedOid": "36fb858"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-02T23:33:18Z",
@@ -18390,7 +18438,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:45:35Z",
@@ -18410,7 +18458,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:47:02Z",
@@ -18430,7 +18478,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:48:08Z",
@@ -18450,7 +18498,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:50:27Z",
@@ -18470,7 +18518,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:52:24Z",
@@ -18490,7 +18538,7 @@
             "abbreviatedOid": "6353337"
           },
           "author": "bc-pi",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2022-11-07T08:55:36Z",
@@ -18567,7 +18615,7 @@
             "abbreviatedOid": "36189a0"
           },
           "author": "tlodderstedt",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "APPROVED",
           "body": "The SD-JWT-VC example looks good to me.",
           "createdAt": "2022-11-22T05:41:20Z",
@@ -21484,7 +21532,7 @@
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/193",
       "state": "CLOSED",
       "author": "tlodderstedt",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Hi, \r\n\r\nthis PR adds examples for PID and EAA (Diploma based on EBSI Schema) as SD-JWT-VCs and an example of a SD-JWT with JSON-LD payload (Vaccination Certificate).",
@@ -33975,7 +34023,7 @@
       "title": "Added jwt-sd as an implementation",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/307",
       "state": "MERGED",
-      "author": "blu3beri",
+      "author": "berendsliedrecht",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
@@ -33985,7 +34033,7 @@
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "0ed84dad214976505ae55f750a1f179b32c1c50e",
-      "headRepository": "blu3beri/oauth-selective-disclosure-jwt",
+      "headRepository": "berendsliedrecht/oauth-selective-disclosure-jwt",
       "headRefName": "add-implementation",
       "headRefOid": "efe4a17723d5f9ca43785a7403e89a78beb1688a",
       "closedAt": "2023-06-28T16:25:03Z",
@@ -37644,7 +37692,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2023-10-27T10:01:14Z",
-      "updatedAt": "2023-10-27T18:39:29Z",
+      "updatedAt": "2023-11-05T17:14:48Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
@@ -37684,7 +37732,7 @@
       "labels": [],
       "body": "Update change controller for the Structured Syntax Suffix registration from IESG to IETF per IANA suggestion",
       "createdAt": "2023-10-31T13:11:54Z",
-      "updatedAt": "2023-11-03T15:02:23Z",
+      "updatedAt": "2023-11-05T17:15:35Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
@@ -37829,6 +37877,19 @@
               "updatedAt": "2023-11-03T13:36:11Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5mKeld",
+          "commit": {
+            "abbreviatedOid": "61b6898"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-05T17:15:35Z",
+          "updatedAt": "2023-11-05T17:15:35Z",
+          "comments": []
         }
       ]
     },
@@ -37844,7 +37905,7 @@
       "labels": [],
       "body": "These are two lists that had indentation changed and I think they look ok:\r\n\r\nhttps://drafts.oauth.net/oauth-selective-disclosure-jwt/mmark-40-lists/draft-ietf-oauth-selective-disclosure-jwt.html#name-verification-and-processing \r\n\r\nhttps://drafts.oauth.net/oauth-selective-disclosure-jwt/mmark-40-lists/draft-ietf-oauth-selective-disclosure-jwt.html#name-verification-by-the-verifie",
       "createdAt": "2023-11-03T15:02:58Z",
-      "updatedAt": "2023-11-03T15:11:24Z",
+      "updatedAt": "2023-11-05T17:14:12Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
@@ -37855,8 +37916,30 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "Excellent, thank you for cleaning this up!",
+          "createdAt": "2023-11-05T17:13:58Z",
+          "updatedAt": "2023-11-05T17:13:58Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5mKeif",
+          "commit": {
+            "abbreviatedOid": "e005a84"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-05T17:14:12Z",
+          "updatedAt": "2023-11-05T17:14:12Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
