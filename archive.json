@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-07T00:52:47.379526+00:00",
+  "timestamp": "2023-11-09T00:52:13.949475+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -8523,7 +8523,7 @@
     {
       "number": 328,
       "id": "I_kwDOHTmVzM5uCHsJ",
-      "title": "HMAC of KB JWT",
+      "title": "HMAC Issuer-signed JWT and/or KB-JWT",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/328",
       "state": "OPEN",
       "author": "Sakurann",
@@ -8534,7 +8534,7 @@
       ],
       "body": "[filing on behalf, not my issue]\r\nA request has been received via work in ISO to enable an option to HMAC KB JWT to enable non-repudiation.",
       "createdAt": "2023-08-11T00:29:20Z",
-      "updatedAt": "2023-10-26T21:50:41Z",
+      "updatedAt": "2023-11-07T18:27:20Z",
       "closedAt": null,
       "comments": [
         {
@@ -8550,6 +8550,20 @@
           "body": "A potential variation on this issue (and maybe common point of misunderstanding/confusion in general) would instead be to allow for the Issuer-signed JWT to be HMAC'd. It's been discussed a few times I think but came up again with Neil Madden being supportive of the idea in this ML thread https://mailarchive.ietf.org/arch/msg/oauth/rPitG7FvJcVEyIcAwn0bXzGToGM/ that I've copied relevant parts from:\r\n\r\n\r\n> > >  [Neil] The draft repeatedly says that a symmetric signature algorithm (MAC) must not be used. Perhaps I\u2019m missing something here, but why not? It doesn\u2019t seem like it compromises any of the intended security properties. Use of a symmetric MAC may also limit the privacy impacts on users as it provides some measure of deniability (similar to that mentioned in section 12.1), as any Verifier in possession of the secret key could also have produced any claims that are subsequently leaked, allowing the user to deny that they were produced by the supposed Issuer. (This deniability property holds even without subsequent leaking of old signing keys).\r\n\r\n> > [Brian] The thinking behind that was basically that this Issuer-Holder-Verifier model implies/assumes that an Issuer issues a token with no idea of where it\u2019ll be presented and having a shared symmetric key seemed really weird in that situation. Also hard to explain why or how a shared symmetric key would work in that situation too. That said, there\u2019s been some talk about loosening that restriction - largely around the same reasoning on deniability that you cite - I guess your comment here should be taken as supportive of that prospective change?\r\n\r\n>  [Neil] Yes. \r\n\r\n",
           "createdAt": "2023-10-26T19:57:36Z",
           "updatedAt": "2023-10-26T21:50:41Z"
+        },
+        {
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "closing this because confirmed that what is potentially needed is HMACing issuer-signed credential and not KB JWT.",
+          "createdAt": "2023-11-07T13:10:07Z",
+          "updatedAt": "2023-11-07T13:10:07Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "reopening to have some tracking of the potential variation on this issue of having the Issuer-signed JWT to be HMAC'd",
+          "createdAt": "2023-11-07T15:44:11Z",
+          "updatedAt": "2023-11-07T15:44:11Z"
         }
       ]
     },
@@ -8893,7 +8907,7 @@
       ],
       "body": "It might be obvious to some/many but I think it's worth mentioning that the key binding key needs to be unique per SD-JWT when using batch issuance to try and get verifier/verifier unthinkably. I feel like I've seen it come up in a few discussions recently and sometimes stated like it was a new discovery. Having just a mention of it in the draft could be helpful guidance/reminder and also preempt criticism that it was somehow not known. \r\n\r\nMaybe just a few words in https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-05.html#name-unlinkability ",
       "createdAt": "2023-09-22T16:41:35Z",
-      "updatedAt": "2023-10-17T15:41:04Z",
+      "updatedAt": "2023-11-07T15:51:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -8902,6 +8916,13 @@
           "body": "making it clearer would be nice",
           "createdAt": "2023-09-26T04:20:29Z",
           "updatedAt": "2023-09-26T04:20:29Z"
+        },
+        {
+          "author": "paulbastian",
+          "authorAssociation": "NONE",
+          "body": "In batch issued credentials it might make sense to also think about iat/exp dates\r\nEither these should be:\r\n- round up/down to certain timepoints, e.g. 24h UTC times giving a better herd anonymity\r\n- randomize the timepoints within a certain range",
+          "createdAt": "2023-11-07T15:51:44Z",
+          "updatedAt": "2023-11-07T15:51:44Z"
         }
       ]
     },
@@ -9075,10 +9096,12 @@
       "author": "rohan-wire",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "pending-close"
+      ],
       "body": "Hi,\r\nCurrently an array which holds the salt and an unblinded claim has different forms depending on whether is contains array or non-array values. Nested disclosures require potentially different combinations of disclosures.\r\n\r\nInstead, what if there was only exactly one location for the `_sd` claim array (usually at the root of the document), and the disclosure array always had the following always consistent form:\r\n\r\n- salt\r\n- claim path from the location of the parent of the `_sd` claim of the JWT\r\n- value\r\n\r\nFor example:\r\n[\"r0mhd7LctwDCTXF_YfvV0g\", [\"family_name\"], \"M\u00f6bius\"]\r\n[\"uKp1B0jI2Ezmuo8EaNRG2Q\", [\"nationalities\",\"...\"], \"FR\"]\r\n[\"CTCthBCyHMuDlXF9qtY6TA\", [\"address\",\"postcode\"], \"EC1\"]\r\n\r\nWhere `family_name` is a peer to the _sd claim array portion of the JWT,\r\n`nationalities` is to `_sd`, and \"...\" indicates this is one value in the array, and\r\n`postcode` is an element inside `address`, which is a peer to `_sd`.",
       "createdAt": "2023-10-23T23:51:38Z",
-      "updatedAt": "2023-10-27T19:11:19Z",
+      "updatedAt": "2023-11-07T17:05:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -9156,7 +9179,7 @@
       "labels": [],
       "body": "Saying something about matching the strength of hash function and signature algorithm would probably be worthwhile. \r\n\r\nresulting from this thread https://mailarchive.ietf.org/arch/msg/oauth/liu4pJP0_p0O3xJCXkcadl8uNAk/ / https://mailarchive.ietf.org/arch/msg/oauth/UJQVtWdV4Woz0oDDEM9z82zgByE/ etc \r\n\r\n\"... indicates that the security strength of the signature scheme is bounded by the collision resistance of the hash function - e.g. there\u2019s little point using ES512 with SHA-256, for example. Probably the security considerations should suggest matching hash functions to signature algorithms.\" ",
       "createdAt": "2023-10-25T20:16:23Z",
-      "updatedAt": "2023-10-30T17:43:05Z",
+      "updatedAt": "2023-11-07T15:26:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -9165,6 +9188,13 @@
           "body": "How to actually write this in an appropriate way for a draft RFC feels kinda tricky though. JWE has some text about using [Using Matching Algorithm Strengths](https://datatracker.ietf.org/doc/html/rfc7516#section-11.3) that I was hopping to borrow from but the context is (unsurprisingly) different enough that using text straight from it doesn't quite work. Maybe adding a very general statement in [Choice of a Hash Algorithm](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-choice-of-a-hash-algorithm) would be sufficient. ",
           "createdAt": "2023-10-30T17:43:05Z",
           "updatedAt": "2023-10-30T17:43:05Z"
+        },
+        {
+          "author": "rohan-wire",
+          "authorAssociation": "NONE",
+          "body": "At IETF 118 Tuesday meeting, Orie proposed locking the hash to the one committed to by the Issuer.",
+          "createdAt": "2023-11-07T15:26:19Z",
+          "updatedAt": "2023-11-07T15:26:19Z"
         }
       ]
     },
@@ -9220,9 +9250,17 @@
       "labels": [],
       "body": "Do we want the header `\"typ\":\"example+sd-jwt\"` in every example? I'm honestly not sure but wanted to ask b/c that looks like it's going to be the result from https://github.com/openwallet-foundation-labs/sd-jwt-python/pull/10 upstream. ",
       "createdAt": "2023-11-03T17:40:08Z",
-      "updatedAt": "2023-11-03T17:40:08Z",
+      "updatedAt": "2023-11-07T16:56:14Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "We should make a conscious decision about this, especially regarding the examples in the appendix.",
+          "createdAt": "2023-11-07T16:56:14Z",
+          "updatedAt": "2023-11-07T16:56:14Z"
+        }
+      ]
     },
     {
       "number": 366,
@@ -9269,6 +9307,144 @@
       "body": "In this thread https://mailarchive.ietf.org/arch/msg/oauth/SVXj_3sqcRT5o6S-f6NOATtK-ro/ is a discussion with Neil Madden that ultimately I interpret as being about how static a verifier's acceptance/validation policy has to be (especially with respect to key binding) and that the current draft can be read as prohibiting things like migration to a stricter policy over time. IMHO we don't want to unintentionally prohibit that kind of thing but absolutely need to keep general principle/requirement that a verifier have a validation policy that isn't unduly/unexpectedly influenced by the (sometimes attacker-controllable) content of the token. I'm not sure how to reasonably convey that in the context of the draft as it is. And don't want to make large changes for this. So this issue is a placeholder to look at small refinements to current text that could be perceived as too limiting/strict. And/or maybe adding a short new considerations section about verifier policy that explains that a policy isn't necessarily completely static.  ",
       "createdAt": "2023-11-06T21:22:40Z",
       "updatedAt": "2023-11-06T21:23:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 369,
+      "id": "I_kwDOHTmVzM52HS8U",
+      "title": "Allow HMAC-based Issuer-signed JWTs and KB-JWTs to support different aspects of repudiation",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/369",
+      "state": "OPEN",
+      "author": "awoie",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently the spec says:\r\n> It MUST NOT use none or an identifier for a symmetric algorithm (MAC).\r\n\r\nTo support KB-JWTs using HS256, for example after using DH key agreement, we should allow symmetric algorithms.",
+      "createdAt": "2023-11-07T15:25:28Z",
+      "updatedAt": "2023-11-07T21:29:30Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "tlodderstedt",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I support this issue. There are scenarios where sd-jwts may be protected with symmetric crypto. I'm wondering why symmetric algorithm (MAC) are ruled out so far. ",
+          "createdAt": "2023-11-07T15:28:15Z",
+          "updatedAt": "2023-11-07T15:28:15Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "The section I quoted applies to Issuer-signed JWTs, closing this issue.",
+          "createdAt": "2023-11-07T15:32:44Z",
+          "updatedAt": "2023-11-07T15:32:44Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "After some internal discussion, I guess it is worthwhile to confirm with the authors that HMAC for KB-JWT is supported @bc-pi @danielfett ?",
+          "createdAt": "2023-11-07T15:34:18Z",
+          "updatedAt": "2023-11-07T15:34:18Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "I quoted the wrong section above. However, in the KB-JWT section there is a similar requirement on `alg` of the KB-JWT:\r\n> alg: REQUIRED. A digital signature algorithm identifier such as per IANA \"JSON Web Signature and Encryption Algorithms\" registry. MUST NOT be none or an identifier for a symmetric algorithm (MAC).\r\n\r\nBy having this requirement it means the SD-JWT spec does not allow HS256 and therefore does not allow approaches where a HS256 is agreed via DH. Note, the asymmetric DH key could still be endorsed by the `cnf` claim",
+          "createdAt": "2023-11-07T15:39:32Z",
+          "updatedAt": "2023-11-07T15:39:32Z"
+        },
+        {
+          "author": "tlodderstedt",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I think it should be allowed for both, kb jwt and sd jwt. Or let me put it the other way around. Why is it prohibited now?",
+          "createdAt": "2023-11-07T15:41:33Z",
+          "updatedAt": "2023-11-07T15:41:33Z"
+        },
+        {
+          "author": "paulbastian",
+          "authorAssociation": "NONE",
+          "body": "The text is only about SD-JWT right now. I actually want HMAC for SD-JWT",
+          "createdAt": "2023-11-07T15:45:23Z",
+          "updatedAt": "2023-11-07T15:45:23Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "> The text is only about SD-JWT right now. I actually want HMAC for SD-JWT\r\n\r\nCurrently, the spec does not allow HMAC for Issuer-signed JWT and it does not allow HMAC for KB-JWTs. To support repudiation KB-JWTs should allow `alg` values involving symmetric keys such as HS256 (see my comment above).",
+          "createdAt": "2023-11-07T15:48:38Z",
+          "updatedAt": "2023-11-07T15:48:38Z"
+        },
+        {
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't support adding an option to HMAC KB JWT. Issuer signs over the key used to HMAC KB JWT. Anyone who knows the nonce of the transaction can generate that HMAC KB JWT. It does not proof anything. It only makes sense if it is issuance during presentation where wallet is asking issuer to issue over wallet's key that wallet generated for that verifier.",
+          "createdAt": "2023-11-07T15:49:47Z",
+          "updatedAt": "2023-11-07T15:49:47Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "> I don't support adding an option to HMAC KB JWT. Issuer signs over the key used to HMAC KB JWT. Anyone who knows the nonce of the transaction can generate that HMAC KB JWT. It does not proof anything. It only makes sense if it is issuance during presentation where wallet is asking issuer to issue over wallet's key that wallet generated for that verifier.\r\n\r\nThis is how it works:\r\n- The issuer signs the public key of the holder and puts it into the `cnf` claim.\r\n- Verifier provides their public key (potentially ephemeral) to the holder.\r\n- Holder performs DH to compute a shared secret and then derives a symmetric key, for example using concatKDF\r\n- Holder computes the HMAC and encodes it as a KB-JWT\r\n- Holder provides KB-JWT to the verifier\r\n- Verifier verifies KB-JWT and knows that holder signed it but verifier cannot prove to anybody else that holder signed it because the verifier could have also computed it -> repudiation.",
+          "createdAt": "2023-11-07T15:53:47Z",
+          "updatedAt": "2023-11-07T15:53:47Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "> > I don't support adding an option to HMAC KB JWT. Issuer signs over the key used to HMAC KB JWT. Anyone who knows the nonce of the transaction can generate that HMAC KB JWT. It does not proof anything. It only makes sense if it is issuance during presentation where wallet is asking issuer to issue over wallet's key that wallet generated for that verifier.\r\n> \r\n> This is how it works:\r\n> \r\n> * The issuer signs the public key of the holder and puts it into the `cnf` claim.\r\n> * Verifier provides their public key (potentially ephemeral) to the holder.\r\n> * Holder performs DH to compute a shared secret and then derives a symmetric key, for example using concatKDF\r\n> * Holder computes the HMAC and encodes it as a KB-JWT\r\n> * Holder provides KB-JWT to the verifier\r\n> * Verifier verifies KB-JWT and knows that holder signed it but verifier cannot prove to anybody else that holder signed it because the verifier could have also computed it -> repudiation.\r\n\r\nDH is computed using the public key of the verifier and the private key of the holder, so the HMAC proves KB of the private key of the holder.",
+          "createdAt": "2023-11-07T15:59:12Z",
+          "updatedAt": "2023-11-07T15:59:12Z"
+        },
+        {
+          "author": "awoie",
+          "authorAssociation": "NONE",
+          "body": "Essentially, there are two things where repudation could be applied:\r\n- KB-JWTs (especially if sd_hash is used)\r\n- Issuer-signed JWTs\r\n\r\nBoth can use an approach using DH with a private holder key and a public verifier key to derive a symmetric key to either issue an SD-JWT or prove KB of the `cnf` claim.",
+          "createdAt": "2023-11-07T16:21:58Z",
+          "updatedAt": "2023-11-07T16:21:58Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#328 is related and has some prior discussion ",
+          "createdAt": "2023-11-07T16:25:07Z",
+          "updatedAt": "2023-11-07T16:25:07Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The thinking behind the Issuer-signed JWT being only asymmetric was basically that this model implies/assumes that an Issuer issues a token/credential to the holder with no idea of where the holder will use it. Having a shared symmetric key seemed really weird in that situation. Also hard/awkward to explain why or how a shared symmetric key would work in that kind of situation (like ECDH happening through the holder to establish an symmetric key between verifier and issuer is a pretty different model with less obvious need for SD).  But with that said, there\u2019s been some reoccurring talk about loosening the restriction to not prohibit an HMAC on the Issuer-signed JWT. And thinking (mostly from @danielfett) that that change could be made without delving into the how or why details. Personally, I'd be okay with allowing it but do not think the draft should get into describing how it might work. ",
+          "createdAt": "2023-11-07T19:24:29Z",
+          "updatedAt": "2023-11-07T19:41:47Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "With respect to HMAC for key binding - the current draft does allow for Key Binding to be \"provided by means not defined in this specification\" like [here](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt#section-10-7) and [here](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt#section-8.3-4.3.2.1) and maybe other places. Is that sufficient to allow for these cases that need repudation of the presentation? \r\n\r\n\r\n\r\n",
+          "createdAt": "2023-11-07T19:50:34Z",
+          "updatedAt": "2023-11-07T19:50:34Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Allowing for HMAC'd KB-JWT doesn't seem unreasonable but I don't think defining the whole DH & KDF dance is appropriate at the level of this draft. So appropriate scoping and detail might be tricky. But I think it'd have to be similar to the treatment of nonce and aud in the KB-JWT now (which say \"How this value is obtained is up to the protocol used and out of scope of this specification\" and \"How the value is represented is up to the protocol used and out of scope of this specification\" respectively). ",
+          "createdAt": "2023-11-07T20:26:14Z",
+          "updatedAt": "2023-11-07T21:29:30Z"
+        }
+      ]
+    },
+    {
+      "number": 370,
+      "id": "I_kwDOHTmVzM52HVk-",
+      "title": "Add 2.1 Abbreviations",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/370",
+      "state": "OPEN",
+      "author": "sakimura",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Abbreviations appear in this document without first being defined, e.g., KB-JWT. \r\nIt would make it easier for the readers if the document has an abbreviation section near the top of the document. \r\nProposal: \r\nCreate a new section 2.1 Abbreviation and collect all the abbreviations.",
+      "createdAt": "2023-11-07T15:30:36Z",
+      "updatedAt": "2023-11-07T15:30:36Z",
       "closedAt": null,
       "comments": []
     }
