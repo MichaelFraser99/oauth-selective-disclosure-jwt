@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-09T00:52:13.949475+00:00",
+  "timestamp": "2023-11-12T00:55:57.213572+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -18509,7 +18509,7 @@
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "7f2ccb7c450affb5d3327e43c21672bb39308955",
-      "headRepository": "bc-pi/oauth-selective-disclosure-jwt",
+      "headRepository": null,
       "headRefName": "patch-1",
       "headRefOid": "28f26279c98b09c3bbbb2b996c4df3650dda5a0b",
       "closedAt": "2022-11-02T23:06:23Z",
