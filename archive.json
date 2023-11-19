@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-16T00:54:29.462828+00:00",
+  "timestamp": "2023-11-19T00:57:48.959221+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -37718,7 +37718,7 @@
       "labels": [],
       "body": "Addresses Issue #342 \r\n\r\nInstead of just adding text re the key binding keys, I rewrote the whole section, as the previous one was more of a placeholder.",
       "createdAt": "2023-10-17T15:21:29Z",
-      "updatedAt": "2023-10-30T19:04:12Z",
+      "updatedAt": "2023-11-16T17:29:08Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "f7fdcf0d35b02f6d1f6e9dbfc98eec56fa842a2d",
