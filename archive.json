@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-21T00:55:12.448653+00:00",
+  "timestamp": "2023-11-23T00:53:46.591784+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -9066,7 +9066,7 @@
       ],
       "body": "There are various sentences like:\r\n\r\n> When Key Binding is not enforced, any entity in possession of an SD-JWT Presentation can forward the contents to third parties\r\n\r\nwhere presentation has a capital P as if it's a defined term. Probably it should have an actual definition (I can't find one) but if not it should probably be lower cased?",
       "createdAt": "2023-10-23T14:06:47Z",
-      "updatedAt": "2023-10-30T09:05:50Z",
+      "updatedAt": "2023-11-22T16:59:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -9075,6 +9075,13 @@
           "body": "This is how `Presentation` is defined in OID4VP:\r\n\r\n> Presentation: Data that is presented to a specific Verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.\r\n\r\nhttps://openid.github.io/OpenID4VP/openid-4-verifiable-presentations-wg-draft.html#section-2-3.8\r\n\r\nand I think it's better define it than just make it lower-case, as the term is used pretty frequently.",
           "createdAt": "2023-10-23T15:58:18Z",
           "updatedAt": "2023-10-23T15:58:18Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "I don't think just removing the capitalization helps.  It's still an undefined term.  In the spirit of #374, it seems like we actually want two concepts here, (1) handing someone an Issuer JWT + disclosures, where they can verify its integrity, drop disclosures and/or hand it to someone else, and (2) handing someone an Issuer JWT + disclosures + KB JWT, where the only thing they can do is verify it.",
+          "createdAt": "2023-11-22T16:59:44Z",
+          "updatedAt": "2023-11-22T16:59:44Z"
         }
       ]
     },
@@ -9658,7 +9665,7 @@
       "labels": [],
       "body": "This document actually defines two object formats, with distinct formats and validation processes:\r\n\r\n1. An object that is sent from Issuer to Holder, containing the Issuer JWT and zero or more disclosures\r\n    * Format: `IssuerJWT~disclosure~...~disclosure~`\r\n    * Validation: Validate the Issuer JWT, validate that all disclosures are present in the Issuer JWT claims\r\n2. An object that is sent from Holder to Verifier, containing the Issuer JWT, zero or more disclosures, and a Key Binding JWT\r\n    * Format: `Type1Object+KBJWT = IssuerJWT~disclosure~...~disclosure~KBJWT`\r\n    * Validation: Validate the KB JWT and `cnf`, then validate the type-(1) object\r\n\r\nRight now, the document refers to only one format, SD-JWT, which may or may not have a KB-JWT.  The document should name these two things differently and make the different processes clear.  In my notes, I have called these a \"token\" and a \"presentation\", respectively, but I don't have strong feelings about terminology.",
       "createdAt": "2023-11-13T14:08:32Z",
-      "updatedAt": "2023-11-14T00:29:04Z",
+      "updatedAt": "2023-11-22T21:40:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -9681,6 +9688,41 @@
           "body": "> I admit that I have not done the work to see how the current text would map to this structure. If people are on board in principle, I could work up a PR that would make a more concrete proposal.\r\n\r\nOn the general principle at a high level I think we have quite similar end goals of avoiding \"cross-contamination\" type confusion. I might quibble with some of the details and names and stuff. And I suspect the current text doesn't map easily at all. I'm not necessarily opposed to trying something here. But need to be conscientiousness of lots of (sometimes competing) factors including the current content of the whole draft and especially not breaking things. I realize that's not a very concrete statement - sorry! - but it's the best I could articulate. ",
           "createdAt": "2023-11-14T00:10:21Z",
           "updatedAt": "2023-11-14T00:26:56Z"
+        },
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "I think this is not very comparable to the alg none \"flaw\" at all. The problem with alg none is that it seemingly is a signature, its just a \"bad\" algorithm. When the KB-JWT is missing, a major part of the verification would not work. ",
+          "createdAt": "2023-11-21T17:05:58Z",
+          "updatedAt": "2023-11-21T17:05:58Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think that the current encoding design, which had a lot of thought put into it, does a good job balancing many real engineering tradeoffs.  It would be unnecessarily disruptive to change it at this point.\r\n\r\nWith respect to `\"alg\": \"none\"`, *every* security issue that's arisen from it is a consequence of implementations not following normative requirements in the specification.  Those requirements, from https://www.rfc-editor.org/rfc/rfc7515.html#section-5.2, are:\r\n> Finally, note that it is an application decision which algorithms may be used in a given context.  Even if a JWS can be successfully validated, unless the algorithm(s) used in the JWS are acceptable to the application, it SHOULD consider the JWS to be invalid.\r\n\r\nIt's the JWS library's job to determine if a JWS is syntactically correct.  It's the application's job to determine if it's semantically correct.  Applications that don't do this are abdicating their security responsibilities.",
+          "createdAt": "2023-11-21T20:26:52Z",
+          "updatedAt": "2023-11-21T20:26:52Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "@danielfett The specific text that is freaking me out here is:\r\n\r\n> Determine if Key Binding is to be checked according to the Verifier's policy for the use case at hand. This decision MUST NOT be based on whether a Key Binding JWT is provided by the Holder or not. Refer to [Section 11.6](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#key_binding_security) for details.\r\n\r\nThis invites people to write code that is insecure unless the operator writes a policy that corrects for the deficiencies of the code.  As @selfissued points out, when things are structured that way, people will fail to write those policies in a safe way, and you get security defects.\r\n\r\nTo frame it in terms of API design:\r\n\r\n```\r\n# What the document has now\r\ndef verify_sd_jwt(sd_jwt, require_kb)\r\n\r\n# What the document ought to have\r\ndef verify_sd_jwt(sd_jwt) # KB MUST NOT be present\r\ndef verify_sd_jwt_with_key_binding(sd_jwt) # KB MUST be present and valid\r\n```\r\n\r\nThe point being that the `require_kb` flag has significant security implications (much like a putative \"accept `alg:none` flag), so we shouldn't express things in those terms.  You would never write a data import method that is like `import_data(data, signed)`, because the first time someone calls it with `signed=false` in the wrong context, you have a security incident.  Instead, you would write a separate `import_data_raw_danger_danger_danger(data)` method, and be very careful about where you use it.  If an application doesn't care about key binding, it should explicitly transform the SD-JWT to strip it.\r\n\r\nNet of all that ranting, though, all I'm saying here is that we should split the current verification algorithm in two, where one algorithm covers validation of the base SD-JWT properties (issuer JWT valid, all disclosures accounted for), and the other first validates the key binding, then calls the first algorithm.",
+          "createdAt": "2023-11-22T15:57:41Z",
+          "updatedAt": "2023-11-22T15:57:41Z"
+        },
+        {
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> we should split the current verification algorithm in two, where one algorithm covers validation of the base SD-JWT properties (issuer JWT valid, all disclosures accounted for), and the other first validates the key binding, then calls the first algorithm.\r\n\r\nI think that makes sense. as it sounds like we agree that \"verifier can have both `def verify_sd_jwt(sd_jwt) # KB MUST NOT be present` and `def verify_sd_jwt_with_key_binding(sd_jwt) # KB MUST be present and valid` and calling one or the other based on the credential/use-case?",
+          "createdAt": "2023-11-22T20:19:32Z",
+          "updatedAt": "2023-11-22T20:19:32Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "Yeah, I think I can live with that.  It still makes me a little queasy to have the Verifier accepting documents with two different sets of security properties, but I'll take an antacid :)  We might want to split the Holder->Verifier arrow in [Figure 1](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#figure-1) into two arrows, one for each type of object.\r\n\r\nI would also still prefer we had separate terms for \"SD-JWT without KB-JWT\" and \"SD-JWT with KB-JWT\", since these have distinct formats and algorithms.",
+          "createdAt": "2023-11-22T21:40:44Z",
+          "updatedAt": "2023-11-22T21:40:44Z"
         }
       ]
     },
@@ -9696,7 +9738,7 @@
       "labels": [],
       "body": "An SD-JWT with zero disclosures and no key binding is the same as a JWT -- you can't undo any of the selective disclosures, so you have to take the claims as they are.  But with the current document, the two cases are syntactically different: SD-JWT(0) has a `~` character at the end, and a plain JWT doesn't.\r\n\r\nThis mismatch is unfortunate for a couple of reasons.  It means that if you're taking one of these objects between SD-aware and non-SD-aware contexts, you have to have a mapping layer that adds and removes the `~`.  And it makes it impossible to use the key binding feature as-is with a plain JWT, because the key binding feature assumes that the thing being bound ends with the `~` separator.\r\n\r\nI would suggest refactoring as follows:\r\n\r\n1. Define the format of the \"SD-JWT without key binding\" thing to be simply `IssuerJWT~disclosure~...~disclosure` (no final `~`)\r\n2. Define the format of an [SD-]JWT with key binding to be `JWT~KBJWT` (with the intermediate `~`, which is absent today)\r\n\r\nThis aligns well with the distinction proposed in #374.\r\n\r\n\r\n",
       "createdAt": "2023-11-13T14:17:40Z",
-      "updatedAt": "2023-11-14T06:38:46Z",
+      "updatedAt": "2023-11-21T16:59:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -9712,6 +9754,13 @@
           "body": "I think there are four cases here:\r\n\r\n1. SD-JWT without selective disclosure and without KB JWT: `JWT~` or `JWT`\r\n2. SD-JWT without selective disclosure and with KB JWT (in scope of SD-JWT VC): `JWT~KBJWT`\r\n3. SD-JWT with selective disclosure and without KB JWT (in scope for SD-JWT VC): `IssuerJWT~Disclosure...Disclosure~` or `IssuerJWT~Disclosure...Disclosure`\r\n4. SD-JWT with selective disclosure and with KB JWT (in scope for SD-JWT VC): `IssuerJWT~Disclosure~...~KBJWT`\r\n\r\nFor point 2 in my list above (Richard's point 2), there is [a related issue in sd-jwt vc spec](https://github.com/oauth-wg/oauth-sd-jwt-vc/issues/184) so it should be clarified.\r\n\r\nFor points 1 and 3 in my list above (Richard's point 1), this is where suggestion not to end with ~ diverges from SD-JWT/SD-JWT VC approaches. \r\nwhen there is selective disclosure (point 3), in addition to what Brian said, there are ~s between disclosures anyway, so I do not see the advantage in processing whether there is a ~ in the end or not. \r\nso even if there is no selective disclosure (point 1), for the consistency/interop sake, having `JWT~` does sound better. But I do agree with Richard that when there is no selective disclosure, it is just a JWT, so the i think it is up to the use-case and implementations to do `JWT~` when they think that that JWT may enter verifiable credential ecosystem where JWTs with selective disclosure are also used and not something for the standard to dictate.. ",
           "createdAt": "2023-11-14T06:38:46Z",
           "updatedAt": "2023-11-14T06:38:46Z"
+        },
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "For the first case, I think distinguishing an SD-JWT without disclosures and KB-JWT (`JWT~`) from a pure JWT (`JWT`) is an important feature: It allows a receiver to always unambiguously distinguish the two cases and tell which processing is required. (It's a bad idea to put an SD-JWT into a JWT processor as it may contain SD-JWT specific structures that should be removed before further processing.)\r\n\r\nFor case three, having the last `~` enables us to distinguish between a presentation with a KB-JWT and a presentation without a KB-JWT without introspecting the last element.",
+          "createdAt": "2023-11-21T16:59:35Z",
+          "updatedAt": "2023-11-21T16:59:35Z"
         }
       ]
     },
@@ -9751,7 +9800,7 @@
       "labels": [],
       "body": "Enclosing claim names (and similar things) in backticks (\\`) in the markdown results in the text being enclosed in `<tt>` in the xml. In the html and pdf outputs of xml2rfc, that text enclosed in `<tt>` is output in a fixed-width font. Which is nice. However, in the txt output and subsequently the [htmlized version](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-06), there is nothing distinguishing such text (xml2rfc did previously surround with quotation marks but is no longer doing so). And even in the [html version](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html) the fixed-width font with short values like claim names isn't always particularly distinguishing.  \r\n\r\nAll this is to say that I think a pass should be made through the whole markdown document to add (where appropriate) quotation marks around claim and header names and any other suitable items.\r\n\r\nI've previously seen questions/comments about this from the RFC Editor as well as IESG and directorate reviews. So it wouldn't be a bad thing to do before getting to that stage. \r\n\r\n",
       "createdAt": "2023-11-15T22:11:37Z",
-      "updatedAt": "2023-11-20T08:09:53Z",
+      "updatedAt": "2023-11-21T17:00:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -9760,6 +9809,20 @@
           "body": "I remember similar discussions from RFC9449 and RFC9207 and AFAIR the outcome was to keep the current form (i.e., optimize for html and PDF output, not txt and htmlized txt).",
           "createdAt": "2023-11-20T08:09:52Z",
           "updatedAt": "2023-11-20T08:09:52Z"
+        },
+        {
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't have a strong opinion, but keeping as-is seems ok, since backticks (`) are reflected in the html version",
+          "createdAt": "2023-11-21T16:45:35Z",
+          "updatedAt": "2023-11-21T16:45:35Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree that we should be using backquotes to annotate identifiers in running text.  I oppose switching to doublequotes.\r\n\r\nI asked the authors of XML2RFC v3 about the change in behavior for .txt files when the \"new\" (now a few years old) IETF RFC format was put in place.  They didn't seem concerned about it at the time - I believe being focused on formatted outputs such as HTML and PDF.\r\n\r\nI don't think it would be productive for us to invent different conventions that try to contravene what the tools we're using do.",
+          "createdAt": "2023-11-21T17:00:52Z",
+          "updatedAt": "2023-11-21T17:00:52Z"
         }
       ]
     },
@@ -9803,12 +9866,62 @@
       "author": "srosenda",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
-      "body": "In draft 06 section [8.2. ](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.2)[Processing by the Holder](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-processing-by-the-holder) there is a list of steps:\r\n\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. If Key Binding is required, create a Key Binding JWT.\r\n>3. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT, the selected Disclosures and, if applicable, the Key Binding JWT.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nNow that draft 06 also has the requirement to add [Integrity Protection of the Presentation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-integrity-protection-of-the) (section [5.3.1.](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-5.3.1)) to Key Binding JWTs, a more natural order for the steps would be to create the SD-JWT for Presentation with the selected Disclosures before the Key Binding JWT, as the presentation is needed for calculating the required `_sd_hash` digest for the Key Binding JWT.\r\n\r\nE.g. something like this:\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT and the selected Disclosures.\r\n>3. If Key Binding is required, create a Key Binding JWT and add it to the Presentation.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nWith that step 2. constructs the input required for the digest computation in step 3. For extra clarity, the requirement to compute and include the integrity protection digest to the Key Binding JWT could be mentioned also here with a reference section 5.3.1. for details.",
+      "labels": [
+        "ready-for-PR"
+      ],
+      "body": "In draft 06 section [8.2. ](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.2)[Processing by the Holder](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-processing-by-the-holder) there is a list of steps:\r\n\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. If Key Binding is required, create a Key Binding JWT.\r\n>3. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT, the selected Disclosures and, if applicable, the Key Binding JWT.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nNow that draft 06 also has the requirement to add [Integrity Protection of the Presentation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-integrity-protection-of-the) (section [5.3.1.](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-5.3.1)) to Key Binding JWTs, a more natural order for the steps would be to create the SD-JWT for Presentation with the selected Disclosures before the Key Binding JWT, as the presentation is needed for calculating the required `_sd_hash` digest for the Key Binding JWT.\r\n\r\nE.g. something like this:\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT and the selected Disclosures.\r\n>3. If Key Binding is required, create a Key Binding JWT and add it to the Presentation.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nWith that step 2. constructs the input required for the digest computation in step 3. For extra clarity, the requirement to compute and include the integrity protection digest to the Key Binding JWT could be mentioned also here with a reference to section 5.3.1. for details.",
       "createdAt": "2023-11-20T14:26:12Z",
-      "updatedAt": "2023-11-20T14:26:12Z",
+      "updatedAt": "2023-11-21T16:37:35Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "That makes sense, thank you!",
+          "createdAt": "2023-11-21T16:37:27Z",
+          "updatedAt": "2023-11-21T16:37:27Z"
+        }
+      ]
+    },
+    {
+      "number": 383,
+      "id": "I_kwDOHTmVzM53mf8k",
+      "title": "Remove mention of unspecified key binding methods",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/383",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The algorithm in [Section 8.3](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.3) includes the following branch:\r\n\r\n> If Key Binding is provided by means not defined in this specification, verify the Key Binding according to the method used.\r\n\r\nWe should remove that branch.  If an implementation is doing something outside this specification, their behavior can deviate arbitrarily from what the specification says.  It's not the job of this specification to cover everything that a verifier might possibly do.\r\n",
+      "createdAt": "2023-11-22T15:24:58Z",
+      "updatedAt": "2023-11-22T15:24:58Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 384,
+      "id": "I_kwDOHTmVzM53mk4s",
+      "title": "Presentation is used without definition",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/384",
+      "state": "CLOSED",
+      "author": "bifurcation",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The document uses \"Presentation\" several times, capitalized as if it is an defined term.  AFAICT it is never actually defined. ",
+      "createdAt": "2023-11-22T15:36:08Z",
+      "updatedAt": "2023-11-22T15:48:04Z",
+      "closedAt": "2023-11-22T15:48:03Z",
+      "comments": [
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "Duplicate of #356 ",
+          "createdAt": "2023-11-22T15:48:03Z",
+          "updatedAt": "2023-11-22T15:48:03Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -38521,7 +38634,7 @@
       "labels": [],
       "body": "for #366 and #359 based largely on text suggested on list by Neil Madden \r\n",
       "createdAt": "2023-11-15T15:46:39Z",
-      "updatedAt": "2023-11-21T00:01:32Z",
+      "updatedAt": "2023-11-21T00:56:22Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
@@ -38608,11 +38721,24 @@
           "comments": [
             {
               "originalPosition": 88,
-              "body": "`, which is surprising` felt out of place, at least to me.\r\n\r\n```suggestion\r\nsame hash value. In which case, the signature over the SD-JWT would not then commit the Issuer to the contents of the\r\nJWT. Where this is a concern, the collision resistance of the hash function SHOULD\r\n```",
+              "body": "`, which is surprising` felt out of place, at least to me.\r\n`Where there is a concern, ` of what?\r\n\r\n```suggestion\r\nsame hash value. In which case, the signature over the SD-JWT would not then commit the Issuer to the contents of the\r\nJWT. The collision resistance of the hash function used to generate digests SHOULD\r\n```",
               "createdAt": "2023-11-21T00:01:32Z",
-              "updatedAt": "2023-11-21T00:01:32Z"
+              "updatedAt": "2023-11-21T00:56:14Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5nxH4l",
+          "commit": {
+            "abbreviatedOid": "90c11c9"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "made suggestions",
+          "createdAt": "2023-11-21T00:56:22Z",
+          "updatedAt": "2023-11-21T00:56:22Z",
+          "comments": []
         }
       ]
     },
@@ -38628,7 +38754,7 @@
       "labels": [],
       "body": "for #360",
       "createdAt": "2023-11-15T20:00:15Z",
-      "updatedAt": "2023-11-15T20:00:16Z",
+      "updatedAt": "2023-11-21T00:56:51Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
@@ -38640,7 +38766,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5nxH-S",
+          "commit": {
+            "abbreviatedOid": "6754066"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-21T00:56:51Z",
+          "updatedAt": "2023-11-21T00:56:51Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 380,
@@ -38654,7 +38794,7 @@
       "labels": [],
       "body": "Strengthen security considerations around claims controlling the validity of the SD-JWT not being selectively disclosable\r\n\r\nto fix #367",
       "createdAt": "2023-11-15T23:09:52Z",
-      "updatedAt": "2023-11-15T23:09:53Z",
+      "updatedAt": "2023-11-21T01:05:34Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
@@ -38666,7 +38806,48 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5nxJYt",
+          "commit": {
+            "abbreviatedOid": "84c4949"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-21T01:03:46Z",
+          "updatedAt": "2023-11-21T01:03:47Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "why? \r\nIssuer might be using claims other than `cnf` to do key binding?",
+              "createdAt": "2023-11-21T01:03:47Z",
+              "updatedAt": "2023-11-21T01:03:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5nxJtG",
+          "commit": {
+            "abbreviatedOid": "84c4949"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-21T01:05:34Z",
+          "updatedAt": "2023-11-21T01:05:34Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "I am not sure about the format of this... SD-JWT is payload agnostic, so there is no guarantee the payload uses JWT claims (though it is of course a convention) - for example, W3C VCDM might use their own claims (`issuer`, `validFrom`, etc.)",
+              "createdAt": "2023-11-21T01:05:34Z",
+              "updatedAt": "2023-11-21T01:05:34Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
