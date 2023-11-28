@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-26T00:57:06.588376+00:00",
+  "timestamp": "2023-11-28T00:54:52.194691+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -9090,7 +9090,7 @@
       "id": "I_kwDOHTmVzM50uBZp",
       "title": "Proposing alternate form to unify disclosure arrays",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/357",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "rohan-wire",
       "authorAssociation": "NONE",
       "assignees": [],
@@ -9099,8 +9099,8 @@
       ],
       "body": "Hi,\r\nCurrently an array which holds the salt and an unblinded claim has different forms depending on whether is contains array or non-array values. Nested disclosures require potentially different combinations of disclosures.\r\n\r\nInstead, what if there was only exactly one location for the `_sd` claim array (usually at the root of the document), and the disclosure array always had the following always consistent form:\r\n\r\n- salt\r\n- claim path from the location of the parent of the `_sd` claim of the JWT\r\n- value\r\n\r\nFor example:\r\n[\"r0mhd7LctwDCTXF_YfvV0g\", [\"family_name\"], \"M\u00f6bius\"]\r\n[\"uKp1B0jI2Ezmuo8EaNRG2Q\", [\"nationalities\",\"...\"], \"FR\"]\r\n[\"CTCthBCyHMuDlXF9qtY6TA\", [\"address\",\"postcode\"], \"EC1\"]\r\n\r\nWhere `family_name` is a peer to the _sd claim array portion of the JWT,\r\n`nationalities` is to `_sd`, and \"...\" indicates this is one value in the array, and\r\n`postcode` is an element inside `address`, which is a peer to `_sd`.",
       "createdAt": "2023-10-23T23:51:38Z",
-      "updatedAt": "2023-11-13T14:50:39Z",
-      "closedAt": null,
+      "updatedAt": "2023-11-27T20:17:12Z",
+      "closedAt": "2023-11-27T19:48:45Z",
       "comments": [
         {
           "author": "danielfett",
@@ -9136,6 +9136,13 @@
           "body": "I agree that pointer-based approaches are unnecessary complexity.\r\n\r\nBut the fact that the same object can have two different syntaxes is a pain to implement.  It would be nice if a disclosure could always be a `[salt, key, value]` array, and just have the `key` be equal to JSON `null` for array disclosures.\r\n\r\nBasically, the current structure requires loose parsing with post-hoc validation, whereas with a uniform structure you could be more declarative.  For example, in Rust with `serde_json`, you could just define a disclosure to be `struct Disclosure(String, Option<String>, Value)`, so that the parser would do the work of validation.",
           "createdAt": "2023-11-13T14:48:57Z",
           "updatedAt": "2023-11-13T14:50:39Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "You'll know from context whether its an array element or object at the point of parsing the JSON array in the disclosure so you can certainly be more strict or declarative. ",
+          "createdAt": "2023-11-27T19:48:17Z",
+          "updatedAt": "2023-11-27T19:48:17Z"
         }
       ]
     },
@@ -9177,7 +9184,7 @@
       "id": "I_kwDOHTmVzM509DKs",
       "title": "matching strength of hash and signature ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/359",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -9188,8 +9195,8 @@
       ],
       "body": "Saying something about matching the strength of hash function and signature algorithm would probably be worthwhile. \r\n\r\nresulting from this thread https://mailarchive.ietf.org/arch/msg/oauth/liu4pJP0_p0O3xJCXkcadl8uNAk/ / https://mailarchive.ietf.org/arch/msg/oauth/UJQVtWdV4Woz0oDDEM9z82zgByE/ etc \r\n\r\n\"... indicates that the security strength of the signature scheme is bounded by the collision resistance of the hash function - e.g. there\u2019s little point using ES512 with SHA-256, for example. Probably the security considerations should suggest matching hash functions to signature algorithms.\" ",
       "createdAt": "2023-10-25T20:16:23Z",
-      "updatedAt": "2023-11-15T15:50:21Z",
-      "closedAt": null,
+      "updatedAt": "2023-11-27T16:19:40Z",
+      "closedAt": "2023-11-27T16:19:40Z",
       "comments": [
         {
           "author": "bc-pi",
@@ -9212,7 +9219,7 @@
       "id": "I_kwDOHTmVzM509Ep5",
       "title": "add RFC reference in considerations on salt entropy   ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/360",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -9223,8 +9230,8 @@
       ],
       "body": "\"The security considerations about salt entropy should probably reference RFC 4086 (BCP 106) or something more up to date (maybe RFC 8937 too).\"\r\n\r\nresulting from this thread https://mailarchive.ietf.org/arch/msg/oauth/liu4pJP0_p0O3xJCXkcadl8uNAk/ / https://mailarchive.ietf.org/arch/msg/oauth/UJQVtWdV4Woz0oDDEM9z82zgByE/",
       "createdAt": "2023-10-25T20:20:52Z",
-      "updatedAt": "2023-11-15T20:00:49Z",
-      "closedAt": null,
+      "updatedAt": "2023-11-27T14:26:30Z",
+      "closedAt": "2023-11-27T14:26:30Z",
       "comments": []
     },
     {
@@ -9280,7 +9287,7 @@
       "id": "I_kwDOHTmVzM52AcIQ",
       "title": " rework \"Choice of a Hash Algorithm\" section ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/366",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -9291,8 +9298,8 @@
       ],
       "body": "from this thread https://mailarchive.ietf.org/arch/msg/oauth/5A1kXMNiIm2DBEcXCadCwUpMhgI/ Neil Madden has suggested the following for \"Choice of a Hash Algorithm\" section. I think (with maybe some minor tweaks) the text works and it would also address issue #359. \r\n\r\n> To ensure privacy of claims that are not being selectively disclosed in a given presentation, the hash function MUST ensure that it is infeasible to calculate the salt and claim name and value (or any portion thereof) that results in a particular digest. This implies the hash function MUST be preimage resistant, but should also not allow an observer to infer any partial information about the undisclosed content. In the terminology of cryptographic commitment schemes, the hash function MUST be computationally hiding.\r\n> \r\n> The hash function MUST be second-preimage resistant. For any salt and claim value pair, it is infeasible to find a different salt and claim value pair that result in the same digest.\r\n> \r\n> The hash function SHOULD also be collision resistant. Although not essential to the anticipated uses of SD-JWT, without collision resistance an Issuer may be able to find multiple disclosures that have the same hash value. The signature over the SD-JWT would not then commit the Issuer to the contents of the JWT, which is surprising. Where this is a concern, the collision resistance of the hash function SHOULD match the collision resistance of the hash function used by the signature scheme. For example, use of the ES512 signature algorithm would require a disclosure hash function with at least 256-bit collision resistance, such as SHA-512.\r\n\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-11-06T18:39:58Z",
-      "updatedAt": "2023-11-15T15:50:50Z",
-      "closedAt": null,
+      "updatedAt": "2023-11-27T16:19:40Z",
+      "closedAt": "2023-11-27T16:19:40Z",
       "comments": []
     },
     {
@@ -9524,16 +9531,18 @@
     {
       "number": 372,
       "id": "I_kwDOHTmVzM52p6c6",
-      "title": "Forbid recursive redaction",
+      "title": "Clarify algorithms to accommodate recursive redaction",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/372",
       "state": "OPEN",
       "author": "bifurcation",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "pending-close"
+      ],
       "body": "Recursive redaction makes it much more complex to validate and handle SD-JWT objects.\r\n\r\nIt requires that disclosure be processed in a particular order, and since this order is known only to the redactor, the disclosures in the SD-JWT must be listed in a specific order to communicate the order.\r\n\r\nIt complicates the matching of disclosure objects to redacted fields, which you need to do in order to validate that the disclosures match the Issuer JWT, or to offer an API of the form \"delete the disclosure for `/address/street_address`\".  Without recursion, you are matching the list of disclosures against the claims in the Issuer JWT.  With recursion, you are matching the list of disclosures against the issuer JWT _and all other disclosures_.\r\n\r\nIt complicates selective disclosure.  Now, if I opt not to disclose a field, I may have rendered some disclosure further down the line meaningless.  So instead of just deleting one disclosure, I also have to search through the disclosed value for further SD hashes, and delete the corresponding disclosures.\r\n\r\nIn principle, we could add specification text that would address these issues.  But it would be a significant amount of text for what seems like a fairly niche feature.  Seems better just to delete the feature and keep things simple. ",
       "createdAt": "2023-11-13T13:48:09Z",
-      "updatedAt": "2023-11-13T23:50:31Z",
+      "updatedAt": "2023-11-27T17:08:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -9598,6 +9607,20 @@
           "body": "The holder selecting which disclosures to include is indeed complicated by the recursive stuff. And I do think/agree that that bit of complication hasn't been considered as much. But I'd argue that's more of an implementation detail of a holder or API exposed to the holder. It could be noted in that [Processing by the Holder](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-processing-by-the-holder) section but I don't think that's changing the algorithm. \r\n\r\nThat is to say that I don't believe much is needed in the way of spec updates to accommodate recursive disclosures.  But yes it adds some complexity to implementations - especially at the holder around choosing which disclosures to include. \r\n\r\nIs it worth it? I honestly don't know. But the very rough consensus thus far has been in favor of allowing recursive disclosures. And I don't think it adds as much complexity as has been suggested here. \r\n",
           "createdAt": "2023-11-13T23:50:30Z",
           "updatedAt": "2023-11-13T23:50:30Z"
+        },
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "We discussed this on the editor's call. Consensus is to keep the feature, in particular since there are some data structures that require recursive disclosures for SD-JWT to be useful for them. \r\n\r\nOpen question is whether there is any clarification we need to make in the text.",
+          "createdAt": "2023-11-27T16:59:50Z",
+          "updatedAt": "2023-11-27T16:59:50Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "Updated title to reflect decision.  I can do a review and propose some clarifications.",
+          "createdAt": "2023-11-27T17:08:55Z",
+          "updatedAt": "2023-11-27T17:08:55Z"
         }
       ]
     },
@@ -9665,7 +9688,7 @@
       "labels": [],
       "body": "This document actually defines two object formats, with distinct formats and validation processes:\r\n\r\n1. An object that is sent from Issuer to Holder, containing the Issuer JWT and zero or more disclosures\r\n    * Format: `IssuerJWT~disclosure~...~disclosure~`\r\n    * Validation: Validate the Issuer JWT, validate that all disclosures are present in the Issuer JWT claims\r\n2. An object that is sent from Holder to Verifier, containing the Issuer JWT, zero or more disclosures, and a Key Binding JWT\r\n    * Format: `Type1Object+KBJWT = IssuerJWT~disclosure~...~disclosure~KBJWT`\r\n    * Validation: Validate the KB JWT and `cnf`, then validate the type-(1) object\r\n\r\nRight now, the document refers to only one format, SD-JWT, which may or may not have a KB-JWT.  The document should name these two things differently and make the different processes clear.  In my notes, I have called these a \"token\" and a \"presentation\", respectively, but I don't have strong feelings about terminology.",
       "createdAt": "2023-11-13T14:08:32Z",
-      "updatedAt": "2023-11-22T21:40:44Z",
+      "updatedAt": "2023-11-27T14:14:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -9723,6 +9746,13 @@
           "body": "Yeah, I think I can live with that.  It still makes me a little queasy to have the Verifier accepting documents with two different sets of security properties, but I'll take an antacid :)  We might want to split the Holder->Verifier arrow in [Figure 1](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#figure-1) into two arrows, one for each type of object.\r\n\r\nI would also still prefer we had separate terms for \"SD-JWT without KB-JWT\" and \"SD-JWT with KB-JWT\", since these have distinct formats and algorithms.",
           "createdAt": "2023-11-22T21:40:44Z",
           "updatedAt": "2023-11-22T21:40:44Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "Thinking on this more, in light of #356, I'm feeling increasingly confident that Token and Presentation are good terms for \"SD-JWT-without-KB\" and \"SD-JWT-with-KB\", respectively.  Or perhaps to be more streamlined, \"SD-JWT\" for \"without KB\" and \"[SD-JWT] Presentation\" for \"with KB\".\r\n\r\nToken / SD-JWT makes sense for \"without-KB\" because it has basically the same dynamics as a JWT.  It's something the Issuer hands to the Holder, and the Holder passes on to other people.  And importantly, it shares with JWT the property of replayability.  The only difference here is that the Holder can drop some disclosures.\r\n\r\nPresentation makes sense for \"with-KB\" because the Holder needs to take an additional operation, making a new thing using the Token and the `cnf`-bound private key.\r\n\r\nYou can still call the Holder--Verifier interaction \"presentation\", you just say that the Holder presents either a Presentation or a bare Token.  The slightly awkwardness of the latter construction is productive, because it tacitly implies that you really ought to be using a Presentation to get the full security properties.\r\n\r\n```\r\n                   +------------+\r\n                   |            |\r\n                   |   Issuer   |\r\n                   |            |\r\n                   +------------+\r\n                         |\r\n                    Issues SD-JWT\r\n              including all Disclosures\r\n                         |\r\n                         v\r\n                   +------------+\r\n                   |            |\r\n                   |   Holder   |\r\n                   |            |\r\n                   +------------+\r\n                       |    |\r\n   Presents Token with |    | Presents Presentation\r\n  selected disclosures | or | with selected disclosures\r\n                       |    |\r\n                       v    v\r\n                   +-------------+\r\n                   |             |+\r\n                   |  Verifiers  ||+\r\n                   |             |||\r\n                   +-------------+||\r\n                    +-------------+|\r\n                     +-------------+\r\n```",
+          "createdAt": "2023-11-27T14:14:52Z",
+          "updatedAt": "2023-11-27T14:14:52Z"
         }
       ]
     },
@@ -9793,15 +9823,15 @@
       "id": "I_kwDOHTmVzM5280zZ",
       "title": "quote claim name literals ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/379",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Enclosing claim names (and similar things) in backticks (\\`) in the markdown results in the text being enclosed in `<tt>` in the xml. In the html and pdf outputs of xml2rfc, that text enclosed in `<tt>` is output in a fixed-width font. Which is nice. However, in the txt output and subsequently the [htmlized version](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-06), there is nothing distinguishing such text (xml2rfc did previously surround with quotation marks but is no longer doing so). And even in the [html version](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html) the fixed-width font with short values like claim names isn't always particularly distinguishing.  \r\n\r\nAll this is to say that I think a pass should be made through the whole markdown document to add (where appropriate) quotation marks around claim and header names and any other suitable items.\r\n\r\nI've previously seen questions/comments about this from the RFC Editor as well as IESG and directorate reviews. So it wouldn't be a bad thing to do before getting to that stage. \r\n\r\n",
       "createdAt": "2023-11-15T22:11:37Z",
-      "updatedAt": "2023-11-21T17:00:54Z",
-      "closedAt": null,
+      "updatedAt": "2023-11-27T16:35:07Z",
+      "closedAt": "2023-11-27T16:35:05Z",
       "comments": [
         {
           "author": "danielfett",
@@ -9823,6 +9853,13 @@
           "body": "I agree that we should be using backquotes to annotate identifiers in running text.  I oppose switching to doublequotes.\r\n\r\nI asked the authors of XML2RFC v3 about the change in behavior for .txt files when the \"new\" (now a few years old) IETF RFC format was put in place.  They didn't seem concerned about it at the time - I believe being focused on formatted outputs such as HTML and PDF.\r\n\r\nI don't think it would be productive for us to invent different conventions that try to contravene what the tools we're using do.",
           "createdAt": "2023-11-21T17:00:52Z",
           "updatedAt": "2023-11-21T17:00:52Z"
+        },
+        {
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "body": "Agreed in the call to stick to backticks.",
+          "createdAt": "2023-11-27T16:35:05Z",
+          "updatedAt": "2023-11-27T16:35:05Z"
         }
       ]
     },
@@ -9922,6 +9959,22 @@
           "updatedAt": "2023-11-22T15:48:03Z"
         }
       ]
+    },
+    {
+      "number": 385,
+      "id": "I_kwDOHTmVzM538P-S",
+      "title": "More figures in Section 3 (Flow Diagram)",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/385",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "It seems like some additional diagrams might be help folks understand some more important properties of this system.  For example, the fact that the Holder can only drop disclosures (not add them; only the Issuer can do that).  I've sketched some figures below, would be happy to make a PR with some ASCII art / [aasvg art](https://github.com/martinthomson/aasvg) if other folks think they would be useful.\r\n\r\n(Note that I have used \"Type 1 Thing\" and \"Type 2 Thing\" as placeholders for \"without KB\" and \"with KB\" cf. #374)\r\n\r\n<img width=\"435\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/9c4d3f8f-f3c6-47b0-85b9-c3f3b75b2f0a\">\r\n\r\n<img width=\"435\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/713b3705-692f-4781-9c41-693953a04dfd\">\r\n\r\n<img width=\"435\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/a4992a59-5c03-4f55-95ec-9ed549f919a5\">\r\n\r\n<img width=\"569\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/f1584815-c19b-4ea6-8181-facf9b86f5f8\">\r\n\r\n<img width=\"626\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/0b4fbf20-35c8-41cc-bf4c-c4ff3698e8c4\">\r\n",
+      "createdAt": "2023-11-27T13:32:34Z",
+      "updatedAt": "2023-11-27T13:32:34Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -38336,24 +38389,26 @@
       "id": "PR_kwDOHTmVzM5d9GHq",
       "title": "Reset branch for example generation",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/361",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "danielfett",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-10-27T10:01:14Z",
-      "updatedAt": "2023-11-20T23:40:14Z",
+      "updatedAt": "2023-11-27T14:29:01Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "2b687565a18992fad305ff710aaabca43f9a3cce",
       "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "headRefName": "danielfett/reset-branch",
       "headRefOid": "de222e32d9fa6dac776963cb5e45d2ef898358b7",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-11-27T14:29:01Z",
+      "mergedAt": "2023-11-27T14:29:01Z",
+      "mergedBy": "danielfett",
+      "mergeCommit": {
+        "oid": "3e30ae7492f9bf1834fe7cfc49c5880e97ff77e3"
+      },
       "comments": [],
       "reviews": [
         {
@@ -38627,24 +38682,26 @@
       "id": "PR_kwDOHTmVzM5fiHT5",
       "title": "rework considerations on the choice of hash algorithm ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/377",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "for #366 and #359 based largely on text suggested on list by Neil Madden \r\n",
       "createdAt": "2023-11-15T15:46:39Z",
-      "updatedAt": "2023-11-21T00:56:22Z",
+      "updatedAt": "2023-11-27T16:19:39Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
       "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "headRefName": "rehashing-hash",
-      "headRefOid": "90c11c921205af3aabbea7f02b71ab463fe34ee9",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "44aa9b7984e4fe8aa3c53cb1c75be3e43036f577",
+      "closedAt": "2023-11-27T16:19:39Z",
+      "mergedAt": "2023-11-27T16:19:39Z",
+      "mergedBy": "danielfett",
+      "mergeCommit": {
+        "oid": "34a5cc8a7ce30472d765c9e95759ced3170f7cdb"
+      },
       "comments": [],
       "reviews": [
         {
@@ -38661,9 +38718,9 @@
           "comments": [
             {
               "originalPosition": 76,
-              "body": "`claim name-value pair` is somewhat confusing and is not used elsewhere in the spec for this purpose.\r\n\r\n```suggestion\r\nthe hash function MUST ensure that it is infeasible to calculate one or more of the three elements\r\n(salt, claim name, claim value) that results in a particular digest. This implies the hash function MUST\r\n```",
+              "body": "`claim name-value pair` is somewhat confusing and is not used elsewhere in the spec for this purpose.\r\n\r\n```suggestion\r\nthe hash function MUST ensure that it is infeasible to calculate any portion of the three elements\r\n(salt, claim name, claim value) that results in a particular digest. This implies the hash function MUST\r\n```",
               "createdAt": "2023-11-20T23:49:41Z",
-              "updatedAt": "2023-11-20T23:49:42Z"
+              "updatedAt": "2023-11-27T16:13:24Z"
             }
           ]
         },
@@ -38739,6 +38796,65 @@
           "createdAt": "2023-11-21T00:56:22Z",
           "updatedAt": "2023-11-21T00:56:22Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oV53G",
+          "commit": {
+            "abbreviatedOid": "90c11c9"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "Thank you, LGTM with Kristina's proposed changes.",
+          "createdAt": "2023-11-27T14:28:40Z",
+          "updatedAt": "2023-11-27T14:28:40Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oW6WT",
+          "commit": {
+            "abbreviatedOid": "90c11c9"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-27T16:16:27Z",
+          "updatedAt": "2023-11-27T16:16:27Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "```suggestion\r\nthe hash function MUST ensure that it is infeasible to calculate any portion of the three elements\r\n(salt, claim name, claim value) from a particular digest. This implies the hash function MUST\r\n```",
+              "createdAt": "2023-11-27T16:16:27Z",
+              "updatedAt": "2023-11-27T16:16:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oW7lT",
+          "commit": {
+            "abbreviatedOid": "44aa9b7"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-27T16:18:56Z",
+          "updatedAt": "2023-11-27T16:18:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oW72Q",
+          "commit": {
+            "abbreviatedOid": "44aa9b7"
+          },
+          "author": "Sakurann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-27T16:19:28Z",
+          "updatedAt": "2023-11-27T16:19:28Z",
+          "comments": []
         }
       ]
     },
@@ -38747,24 +38863,26 @@
       "id": "PR_kwDOHTmVzM5fjm0A",
       "title": "Reference RFC4086 in security considerations about salt entropy ",
       "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/378",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "bc-pi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "for #360",
       "createdAt": "2023-11-15T20:00:15Z",
-      "updatedAt": "2023-11-21T00:56:51Z",
+      "updatedAt": "2023-11-27T14:26:29Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
       "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "headRefName": "ref-RFC4086",
       "headRefOid": "6754066fe7b8f25e029dd2036f18c2a3a2f354ac",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-11-27T14:26:29Z",
+      "mergedAt": "2023-11-27T14:26:29Z",
+      "mergedBy": "danielfett",
+      "mergeCommit": {
+        "oid": "a0bac88fc3d9e7d2c6b4c41924e011ef619922e5"
+      },
       "comments": [],
       "reviews": [
         {
@@ -38778,6 +38896,19 @@
           "body": "",
           "createdAt": "2023-11-21T00:56:51Z",
           "updatedAt": "2023-11-21T00:56:51Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oV4VM",
+          "commit": {
+            "abbreviatedOid": "6754066"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-11-27T14:26:20Z",
+          "updatedAt": "2023-11-27T14:26:20Z",
           "comments": []
         }
       ]
@@ -38794,7 +38925,7 @@
       "labels": [],
       "body": "Strengthen security considerations around claims controlling the validity of the SD-JWT not being selectively disclosable\r\n\r\nto fix #367",
       "createdAt": "2023-11-15T23:09:52Z",
-      "updatedAt": "2023-11-21T01:05:34Z",
+      "updatedAt": "2023-11-27T14:25:58Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
@@ -38844,6 +38975,38 @@
               "body": "I am not sure about the format of this... SD-JWT is payload agnostic, so there is no guarantee the payload uses JWT claims (though it is of course a convention) - for example, W3C VCDM might use their own claims (`issuer`, `validFrom`, etc.)",
               "createdAt": "2023-11-21T01:05:34Z",
               "updatedAt": "2023-11-21T01:05:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5oV1xQ",
+          "commit": {
+            "abbreviatedOid": "84c4949"
+          },
+          "author": "danielfett",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "Overall this looks good to me, thanks for preparing. I think the list of claims should be introduced as \"typical\" or we should not that it is relevant specifically for JWT-based payloads.",
+          "createdAt": "2023-11-27T14:21:53Z",
+          "updatedAt": "2023-11-27T14:25:58Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nThe exact list of such claims will depend on the application\r\nand SHOULD be listed by any application-specific profile of SD-JWT.\r\n```",
+              "createdAt": "2023-11-27T14:21:54Z",
+              "updatedAt": "2023-11-27T14:25:58Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "Maybe an explicit reference to this being the default JWT claims would make this clear.",
+              "createdAt": "2023-11-27T14:23:02Z",
+              "updatedAt": "2023-11-27T14:25:58Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\n* `aud` (Audience), although issuers may want to allow individual entries in the array to be selectively disclosable\r\n```\r\nUppercase MAY? Not sure...",
+              "createdAt": "2023-11-27T14:23:23Z",
+              "updatedAt": "2023-11-27T14:25:58Z"
             }
           ]
         }
