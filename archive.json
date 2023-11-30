@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-11-28T00:54:52.194691+00:00",
+  "timestamp": "2023-11-30T00:54:08.141867+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -9688,7 +9688,7 @@
       "labels": [],
       "body": "This document actually defines two object formats, with distinct formats and validation processes:\r\n\r\n1. An object that is sent from Issuer to Holder, containing the Issuer JWT and zero or more disclosures\r\n    * Format: `IssuerJWT~disclosure~...~disclosure~`\r\n    * Validation: Validate the Issuer JWT, validate that all disclosures are present in the Issuer JWT claims\r\n2. An object that is sent from Holder to Verifier, containing the Issuer JWT, zero or more disclosures, and a Key Binding JWT\r\n    * Format: `Type1Object+KBJWT = IssuerJWT~disclosure~...~disclosure~KBJWT`\r\n    * Validation: Validate the KB JWT and `cnf`, then validate the type-(1) object\r\n\r\nRight now, the document refers to only one format, SD-JWT, which may or may not have a KB-JWT.  The document should name these two things differently and make the different processes clear.  In my notes, I have called these a \"token\" and a \"presentation\", respectively, but I don't have strong feelings about terminology.",
       "createdAt": "2023-11-13T14:08:32Z",
-      "updatedAt": "2023-11-27T14:14:53Z",
+      "updatedAt": "2023-11-28T21:30:52Z",
       "closedAt": null,
       "comments": [
         {
@@ -9753,6 +9753,34 @@
           "body": "Thinking on this more, in light of #356, I'm feeling increasingly confident that Token and Presentation are good terms for \"SD-JWT-without-KB\" and \"SD-JWT-with-KB\", respectively.  Or perhaps to be more streamlined, \"SD-JWT\" for \"without KB\" and \"[SD-JWT] Presentation\" for \"with KB\".\r\n\r\nToken / SD-JWT makes sense for \"without-KB\" because it has basically the same dynamics as a JWT.  It's something the Issuer hands to the Holder, and the Holder passes on to other people.  And importantly, it shares with JWT the property of replayability.  The only difference here is that the Holder can drop some disclosures.\r\n\r\nPresentation makes sense for \"with-KB\" because the Holder needs to take an additional operation, making a new thing using the Token and the `cnf`-bound private key.\r\n\r\nYou can still call the Holder--Verifier interaction \"presentation\", you just say that the Holder presents either a Presentation or a bare Token.  The slightly awkwardness of the latter construction is productive, because it tacitly implies that you really ought to be using a Presentation to get the full security properties.\r\n\r\n```\r\n                   +------------+\r\n                   |            |\r\n                   |   Issuer   |\r\n                   |            |\r\n                   +------------+\r\n                         |\r\n                    Issues SD-JWT\r\n              including all Disclosures\r\n                         |\r\n                         v\r\n                   +------------+\r\n                   |            |\r\n                   |   Holder   |\r\n                   |            |\r\n                   +------------+\r\n                       |    |\r\n   Presents Token with |    | Presents Presentation\r\n  selected disclosures | or | with selected disclosures\r\n                       |    |\r\n                       v    v\r\n                   +-------------+\r\n                   |             |+\r\n                   |  Verifiers  ||+\r\n                   |             |||\r\n                   +-------------+||\r\n                    +-------------+|\r\n                     +-------------+\r\n```",
           "createdAt": "2023-11-27T14:14:52Z",
           "updatedAt": "2023-11-27T14:14:52Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> split the current verification algorithm in two, where one algorithm covers validation of the base SD-JWT properties (issuer JWT valid, all disclosures accounted for), and the other first validates the key binding, then calls the first algorithm.\r\n\r\nIn the common/typical/expected case the key needed to verify the key binding JWT is in the `cnf` of the Issuer-signed JWT so that order of validation steps doesn't work very well.  \r\n\r\n",
+          "createdAt": "2023-11-28T15:51:32Z",
+          "updatedAt": "2023-11-28T20:53:17Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> feeling increasingly confident that Token and Presentation are good terms for \"SD-JWT-without-KB\" and \"SD-JWT-with-KB\", respectively. \r\n\r\nStrongly disagree with Token and Presentation being good terms in this context. \r\n\r\n> Or perhaps to be more streamlined, \"SD-JWT\" for \"without KB\" and \"[SD-JWT] Presentation\" for \"with KB\".\r\n\r\nMaybe. If we decide to have separate terms. Which we have not. ",
+          "createdAt": "2023-11-28T16:19:59Z",
+          "updatedAt": "2023-11-28T16:19:59Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "> > split the current verification algorithm in two, where one algorithm covers validation of the base SD-JWT properties (issuer JWT valid, all disclosures accounted for), and the other first validates the key binding, then calls the first algorithm.\r\n> \r\n> In the common/typical/expected case the key needed to verify the key binding JWT is in the `cnf` of the Issuer-signed JWT so that order of validation steps doesn't work very well.\r\n\r\nSorry for the ambiguity, I was including \"check that the bound public key matches `cnf`\" within \"validate the key binding\".",
+          "createdAt": "2023-11-28T19:28:30Z",
+          "updatedAt": "2023-11-28T20:53:25Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Sorry for the ambiguity, I was including \"check that the bound public key matches cnf\" within \"validate the key binding\".\r\n\r\nThe small point I was trying make there is that typically the \"validation of the base SD-JWT properties\" needs to happen first because the bound public key needed for the \"validate the key binding\" comes out of the former process. So the order of \"first validates the key binding, then calls the first algorithm\" probably needs to be reversed. \r\n\r\nThe meta-point is that such a suggestion to \"split the current verification algorithm\" may not resonate well with those who already question its necessity.",
+          "createdAt": "2023-11-28T21:27:01Z",
+          "updatedAt": "2023-11-28T21:30:52Z"
         }
       ]
     },
@@ -9803,10 +9831,12 @@
       "author": "paulbastian",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "pending-close"
+      ],
       "body": "The current specification gives the example:\r\n```\r\n{\r\n  \"aud\": \"https://verifier.example.org\",\r\n  \"iat\": 2813308004,\r\n  \"nonce\": \"8z8z9X3jUtbthem84swFAzp4aqlHf-sCqQ6eM_qmpUQ\",\r\n  \"_js_sd_jwt\": {\r\n    \"protected\": \"eyJhbGciOiAiRVMyNTYifQ\",\r\n    \"payload\": \"eyJfc2QiOiBbIjRIQm42YUlZM1d0dUdHV1R4LX...1NiJ9\",\r\n    \"signature\": \"y_b8KFVc2GZ1n-...PKsjU3Q\",\r\n  }\r\n  \"disclosures\": [\r\n    \"WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImZhbWlseV9uYW1...vZSJd\",\r\n    \"WyJBSngtMDk1VlBycFR0TjRRTU9xUk9BIiwgImFkZHJlc3MiLC...iVVMifV0\",\r\n    \"WyJlbHVWNU9nM2dTTklJO...V9BIiwgImdpdmVuX25hbWUiLCAiSm9obiJd\"\r\n ]\r\n}\r\n```\r\nI would propose the structure to be more similar to the structure of compact encoding, and shuffle the order in the example:\r\n```\r\n  \"sd_jwt\": {\r\n    \"protected\": \"eyJhbGciOiAiRVMyNTYifQ\",\r\n    \"payload\": \"eyJfc2QiOiBbIjRIQm42YUlZM1d0dUdHV1R4LX...1NiJ9\",\r\n    \"signature\": \"y_b8KFVc2GZ1n-...PKsjU3Q\",\r\n  }\r\n  \"disclosures\": [\r\n    \"WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImZhbWlseV9uYW1...vZSJd\",\r\n    \"WyJBSngtMDk1VlBycFR0TjRRTU9xUk9BIiwgImFkZHJlc3MiLC...iVVMifV0\",\r\n    \"WyJlbHVWNU9nM2dTTklJO...V9BIiwgImdpdmVuX25hbWUiLCAiSm9obiJd\"\r\n ],\r\n  \"kb_jwt\": {\r\n    \"aud\": \"https://verifier.example.org\",\r\n    \"iat\": 2813308004,\r\n    \"nonce\": \"8z8z9X3jUtbthem84swFAzp4aqlHf-sCqQ6eM_qmpUQ\"\r\n  }\r\n}\r\n```\r\n\r\nAlso, the `_sd_hash` is missing",
       "createdAt": "2023-11-13T14:34:26Z",
-      "updatedAt": "2023-11-14T21:12:20Z",
+      "updatedAt": "2023-11-28T15:52:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -9902,13 +9932,15 @@
       "state": "OPEN",
       "author": "srosenda",
       "authorAssociation": "NONE",
-      "assignees": [],
+      "assignees": [
+        "bc-pi"
+      ],
       "labels": [
         "ready-for-PR"
       ],
       "body": "In draft 06 section [8.2. ](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.2)[Processing by the Holder](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-processing-by-the-holder) there is a list of steps:\r\n\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. If Key Binding is required, create a Key Binding JWT.\r\n>3. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT, the selected Disclosures and, if applicable, the Key Binding JWT.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nNow that draft 06 also has the requirement to add [Integrity Protection of the Presentation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-integrity-protection-of-the) (section [5.3.1.](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-5.3.1)) to Key Binding JWTs, a more natural order for the steps would be to create the SD-JWT for Presentation with the selected Disclosures before the Key Binding JWT, as the presentation is needed for calculating the required `_sd_hash` digest for the Key Binding JWT.\r\n\r\nE.g. something like this:\r\n>For presentation to a Verifier, the Holder MUST perform the following (or equivalent) steps:\r\n>\r\n>1. Decide which Disclosures to release to the Verifier, obtaining proper End-User consent if necessary.\r\n>2. Assemble the SD-JWT for Presentation, including the Issuer-signed JWT and the selected Disclosures.\r\n>3. If Key Binding is required, create a Key Binding JWT and add it to the Presentation.\r\n>4. Send the Presentation to the Verifier.\r\n\r\nWith that step 2. constructs the input required for the digest computation in step 3. For extra clarity, the requirement to compute and include the integrity protection digest to the Key Binding JWT could be mentioned also here with a reference to section 5.3.1. for details.",
       "createdAt": "2023-11-20T14:26:12Z",
-      "updatedAt": "2023-11-21T16:37:35Z",
+      "updatedAt": "2023-11-28T18:47:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -9932,9 +9964,31 @@
       "labels": [],
       "body": "The algorithm in [Section 8.3](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.3) includes the following branch:\r\n\r\n> If Key Binding is provided by means not defined in this specification, verify the Key Binding according to the method used.\r\n\r\nWe should remove that branch.  If an implementation is doing something outside this specification, their behavior can deviate arbitrarily from what the specification says.  It's not the job of this specification to cover everything that a verifier might possibly do.\r\n",
       "createdAt": "2023-11-22T15:24:58Z",
-      "updatedAt": "2023-11-22T15:24:58Z",
+      "updatedAt": "2023-11-28T20:49:12Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Indeed it's not the job of this specification to cover everything that a verifier might possibly do. But verifying key binding is important and the specification elsewhere discusses the possibility that the proof of possession could be accomplished by ways other than the KB JWT. As such, we felt that it deserved treatment in the validation steps. ",
+          "createdAt": "2023-11-28T15:24:48Z",
+          "updatedAt": "2023-11-28T15:24:48Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "On the one hand, KB is important.  On the other hand, KB is optional.  \ud83e\udd14 \r\n\r\nWhat other discussion do you have in mind?  I'm not finding it on a quick search through the document.\r\n\r\n\r\n",
+          "createdAt": "2023-11-28T19:33:26Z",
+          "updatedAt": "2023-11-28T19:33:26Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "[Alternatives to a Key Binding JWT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-06#name-alternatives-to-a-key-bindi) for example ",
+          "createdAt": "2023-11-28T20:49:12Z",
+          "updatedAt": "2023-11-28T20:49:12Z"
+        }
+      ]
     },
     {
       "number": 384,
@@ -38925,13 +38979,13 @@
       "labels": [],
       "body": "Strengthen security considerations around claims controlling the validity of the SD-JWT not being selectively disclosable\r\n\r\nto fix #367",
       "createdAt": "2023-11-15T23:09:52Z",
-      "updatedAt": "2023-11-27T14:25:58Z",
+      "updatedAt": "2023-11-28T16:56:54Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
-      "baseRefOid": "e9a5fe053edff904c5f99ccfec9502346f639154",
+      "baseRefOid": "34a5cc8a7ce30472d765c9e95759ced3170f7cdb",
       "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "headRefName": "stronger-claims-of-validity",
-      "headRefOid": "84c49495e343e766020365a0ff0aa5515d52167f",
+      "headRefOid": "0c34bd57865e68f7d44233b7072615f61ba7da22",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -39009,8 +39063,54 @@
               "updatedAt": "2023-11-27T14:25:58Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOHTmVzM5ogrPQ",
+          "commit": {
+            "abbreviatedOid": "84c4949"
+          },
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-11-28T16:47:57Z",
+          "updatedAt": "2023-11-28T16:47:58Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "normative MAY followed by \"want to\" would be an awkward phrasing but maybe just \"although issuers MAY allow individual entries in the array to be selectively disclosable\" ?",
+              "createdAt": "2023-11-28T16:47:57Z",
+              "updatedAt": "2023-11-28T16:48:04Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 386,
+      "id": "PR_kwDOHTmVzM5gtBAQ",
+      "title": "reorder steps in Processing by the Holder",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/386",
+      "state": "OPEN",
+      "author": "bc-pi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": " to fix #382",
+      "createdAt": "2023-11-29T18:59:31Z",
+      "updatedAt": "2023-11-29T18:59:32Z",
+      "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "baseRefName": "master",
+      "baseRefOid": "34a5cc8a7ce30472d765c9e95759ced3170f7cdb",
+      "headRepository": "oauth-wg/oauth-selective-disclosure-jwt",
+      "headRefName": "reorder-holder-steps-382",
+      "headRefOid": "9ba80dacda2d2443c320deda8c929f5689551bdc",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
