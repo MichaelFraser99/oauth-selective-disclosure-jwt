@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-03T00:57:17.513893+00:00",
+  "timestamp": "2023-12-05T00:55:09.126525+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -9501,7 +9501,7 @@
       ],
       "body": "It makes sense for `_sd` to start with an underscore, since it is being inserted into a JSON object supplied by the caller and it needs to be something unlikely to conflict with an existing claim.\r\n\r\nThe `_sd_hash` field appears in the key binding JWT, a format being defined by this document.  So it can safely live without the underscore.",
       "createdAt": "2023-11-13T13:39:00Z",
-      "updatedAt": "2023-11-30T22:42:29Z",
+      "updatedAt": "2023-12-04T22:09:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -9538,6 +9538,48 @@
           "body": "Registered claims (I'm a so-called DE on there so I have some familiarity) don't fully address conflicting names even at the top level with the possibility of the use of private claim names. More could be said about that registry and what it does and doesn't provide in practice but that'd be a digression...\r\n\r\nAnyway, that ` _sd` and  `_sd_alg` show up in the content of issuer-signed JWT is my point of vew for keeping the underscore on both. Also for keeping those two similar to each other. \r\n\r\nLastly note that ` _sd` and  `_sd_alg` have been in the draft for many revisions (back to -02 I think) whereas `_sd_hash` was just introduced in -06. Changing `_sd_hash`  at this point likely wouldn't impact implementations much but changing `_sd_alg` would.   \r\n\r\n",
           "createdAt": "2023-11-13T22:44:39Z",
           "updatedAt": "2023-11-13T22:44:39Z"
+        },
+        {
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I'd prefer to not see ANY public claim names that start with `_`.\r\n\r\nIt starts a convention which I would prefer not to see repeated.\r\n\r\n",
+          "createdAt": "2023-12-04T16:21:22Z",
+          "updatedAt": "2023-12-04T16:22:04Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In OpenID Connect, we decided that our \"meta-claims\" would start with underscore to visually distinguish them from normal claims.  For instance, see the claims `_claim_names` and `_claim_sources` in the registry at https://www.iana.org/assignments/jwt/jwt.xhtml.\r\n\r\nI support SD-JWT continuing to follow this convention and so would prefer that the leading underscore be kept for its meta-claims.",
+          "createdAt": "2023-12-04T17:50:46Z",
+          "updatedAt": "2023-12-04T17:50:46Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "@selfissued What is the difference between \"normal claims\" and \"meta-claims\" here?  And why did OpenID Connect go that way?",
+          "createdAt": "2023-12-04T18:07:26Z",
+          "updatedAt": "2023-12-04T18:07:26Z"
+        },
+        {
+          "author": "selfissued",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\"Meta-claims\" are claims about the structure of where actual claim values can be found - claim values that are not simply top-level members in the JWT Claims Set.  They're road-signs saying where to go to get them - not the destinations themselves.",
+          "createdAt": "2023-12-04T18:11:18Z",
+          "updatedAt": "2023-12-04T18:11:18Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "Thanks, that distinction makes sense.  Applying that to SD-JWT, it seems directly applicable to `_sd`, and `_sd_alg` sort of fits as well, since it tells you how to read the road-signs (to continue @selfissued's metaphor).  I'm OK with these keeping `_`.\r\n\r\nBut `_sd_hash` is not a road-sign, it's the main event.  If you ignore `_sd` or `_sd_alg`, you miss out on some claims, but nothing fundamental breaks.  If you ignore `_sd_hash`, you're not enforcing the key security properties of the system.  So I think the original issue here is still valid.  ",
+          "createdAt": "2023-12-04T19:06:01Z",
+          "updatedAt": "2023-12-04T19:06:01Z"
+        },
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR https://github.com/oauth-wg/oauth-selective-disclosure-jwt/pull/387 would remove the leading underscore on `_sd_hash` (and only there).  Which is the original issue here. ",
+          "createdAt": "2023-12-04T22:09:40Z",
+          "updatedAt": "2023-12-04T22:09:40Z"
         }
       ]
     },
@@ -9981,7 +10023,7 @@
       "labels": [],
       "body": "The algorithm in [Section 8.3](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#section-8.3) includes the following branch:\r\n\r\n> If Key Binding is provided by means not defined in this specification, verify the Key Binding according to the method used.\r\n\r\nWe should remove that branch.  If an implementation is doing something outside this specification, their behavior can deviate arbitrarily from what the specification says.  It's not the job of this specification to cover everything that a verifier might possibly do.\r\n",
       "createdAt": "2023-11-22T15:24:58Z",
-      "updatedAt": "2023-11-28T20:49:12Z",
+      "updatedAt": "2023-12-04T22:53:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -10004,6 +10046,13 @@
           "body": "[Alternatives to a Key Binding JWT](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-selective-disclosure-jwt-06#name-alternatives-to-a-key-bindi) for example ",
           "createdAt": "2023-11-28T20:49:12Z",
           "updatedAt": "2023-11-28T20:49:12Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "body": "Yeah, we should delete that and Section 10 as well.  They don't actually define anything, and they are harmful because they encourage divergent, non-interoperable implementations.  If there are use cases that KB-JWT doesn't cover and needs to, we should accommodate them.  If we don't need to accommodate them, we shouldn't.",
+          "createdAt": "2023-12-04T22:53:44Z",
+          "updatedAt": "2023-12-04T22:53:44Z"
         }
       ]
     },
@@ -10070,6 +10119,46 @@
           "updatedAt": "2023-12-01T21:42:04Z"
         }
       ]
+    },
+    {
+      "number": 391,
+      "id": "I_kwDOHTmVzM54sVwJ",
+      "title": "Example section headings",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/391",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The layout of these section delineations seems off.  There's an \"Example 1\" section header, but no other numbers.  Some examples are top-level, some are subordinate.  Is this intended?\r\n\r\n<img width=\"301\" alt=\"image\" src=\"https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/75597/601c9cb4-ce7a-48d6-a31b-85a566d5f884\">\r\n",
+      "createdAt": "2023-12-04T22:33:05Z",
+      "updatedAt": "2023-12-04T22:53:28Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bc-pi",
+          "authorAssociation": "COLLABORATOR",
+          "body": " > Is this intended?\r\n\r\nKinda.\r\n\r\n[Appendix A](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#appendix-A) has additional examples with some of those other numbers.\r\n![Screenshot 2023-12-04 at 3 44 32 PM](https://github.com/oauth-wg/oauth-selective-disclosure-jwt/assets/71398439/65ea440c-2518-43f7-a7fa-3eba88f57751)\r\n\r\nAnd a few places refer back to \"Example 1\" by name. \r\n\r\nThis all could probably be tidied up though. \r\n\r\n\r\n",
+          "createdAt": "2023-12-04T22:53:27Z",
+          "updatedAt": "2023-12-04T22:53:27Z"
+        }
+      ]
+    },
+    {
+      "number": 392,
+      "id": "I_kwDOHTmVzM54scd3",
+      "title": "JSON serialization doesn't cover key binding",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/392",
+      "state": "OPEN",
+      "author": "bifurcation",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "As in #383, [9. JWS JSON Serialization](https://drafts.oauth.net/oauth-selective-disclosure-jwt/draft-ietf-oauth-selective-disclosure-jwt.html#name-jws-json-serialization) invokes specification by magic:\r\n\r\n> Key Binding (if applicable) will be provided by means not specifically defined in this specification\r\n\r\nIf we are defining a format for SD-JWT, that format needs to include all of the parts of the SD-JWT.  Unless #374 gets fixed, that means the format needs an optional key binding field.\r\n\r\nBut I think that this issue is actually a symptom #374.  The document doesn't define a format for \"SD-JWT with KB\" because it is actually substantively different thing from \"SD-JWT without KB\".  Putting it in JSON just highlights the difference more clearly than `~`-delimited text.\r\n\r\nThe current syntax seems fine to me for \"SD-JWT without KB\".  For \"SD-JWT with KB\", I would think you would want something like:\r\n\r\n```\r\n{\r\n  \"sd_jwt\": { /* format currently specified, or compact */ },\r\n  \"key_binding: { /* JSON-formatted JWS of KB-JWT */ }\r\n}\r\n```\r\n\r\nHere the `sd_jwt` field MUST hash to `sd_hash`, after serialization to the `~` compact form.\r\n",
+      "createdAt": "2023-12-04T22:45:00Z",
+      "updatedAt": "2023-12-04T22:45:15Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -39165,7 +39254,7 @@
       "labels": [],
       "body": "Remove initial underscore on `_sd_hash` for #371\r\n\r\nI do think this change is appropriate but think we should publish a -07 soon if we proceed with it. ",
       "createdAt": "2023-11-30T22:41:30Z",
-      "updatedAt": "2023-11-30T22:41:31Z",
+      "updatedAt": "2023-12-04T22:29:43Z",
       "baseRepository": "oauth-wg/oauth-selective-disclosure-jwt",
       "baseRefName": "master",
       "baseRefOid": "34a5cc8a7ce30472d765c9e95759ced3170f7cdb",
@@ -39177,7 +39266,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOHTmVzM5pHdrF",
+          "commit": {
+            "abbreviatedOid": "93ec8b2"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-12-04T22:29:43Z",
+          "updatedAt": "2023-12-04T22:29:43Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 388,
