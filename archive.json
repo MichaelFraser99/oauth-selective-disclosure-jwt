@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-07T00:54:27.205832+00:00",
+  "timestamp": "2023-12-10T00:58:08.925953+00:00",
   "repo": "oauth-wg/oauth-selective-disclosure-jwt",
   "labels": [
     {
@@ -10190,6 +10190,37 @@
       "updatedAt": "2023-12-05T22:57:48Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 395,
+      "id": "I_kwDOHTmVzM55ExJI",
+      "title": "Audacious Presentations",
+      "url": "https://github.com/oauth-wg/oauth-selective-disclosure-jwt/issues/395",
+      "state": "OPEN",
+      "author": "OR13",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Consider a hypothetical API for verifying an SD-JWT with Key Binding.\r\n\r\nThese examples are inspired by https://github.com/panva/jose/blob/main/docs/functions/jwt_verify.jwtVerify.md\r\n\r\n```\r\nverified = verify<TokenType>(token: string, publicKey, { aud, nonce })\r\n```\r\n\r\nwhen token contains KBT, there are 2 payloads that could have the `aud` and `nonce` claims.\r\n\r\nAn API that addressed this possible confusion would look like:\r\n\r\n```\r\nverified = verify<TokenType>(token: string, issuerPublicKey, { \r\n  issuerSignedJwt: { aud, nonce },  // assume cnf: { jwk }\r\n  keyBindingToken: { aud, nonce }   // assume uses cnf\r\n)\r\n```\r\n\r\nThe problem is SD-JWT has 2 tokens, so the `aud` and `nonce` claims have 2 places to check.\r\n\r\nIf the idea of matching an expected nonce is confusing, focus only on the audience bit.\r\n\r\nThe issuer commits a credential to a specific audience, and the holder commits their key binding token to a specific audience.\r\n\r\nA verifier would want to check that both values are \"acceptable\", and \"acceptable\" could mean the same or different.\r\n\r\nThis is compounded by `aud` being allowed to be an array or string.\r\n\r\nIf an API was exposed that looked like this:\r\n\r\n```\r\nverified = verify<TokenType>(fnard: string, issuerPublicKey, { aud, nonce })\r\n)\r\n```\r\n\r\nI think it would be clear that the `aud` and `nonce` were checks on the key binding token, not on the issuer token.",
+      "createdAt": "2023-12-07T18:16:02Z",
+      "updatedAt": "2023-12-08T17:10:54Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "OR13",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Here is a longer form description of this challenge, with some additional background on who we encountered it, and recommendations for specifications that build on SD-JWT.\r\n\r\nhttps://github.com/transmute-industries/audacious-presentations",
+          "createdAt": "2023-12-08T16:40:25Z",
+          "updatedAt": "2023-12-08T16:40:25Z"
+        },
+        {
+          "author": "tlodderstedt",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Can you please shed some light on what you would use the 'aud' and 'nonce' in the sd-jwt for and why the verifier should consider them during validation of the presentation? In my opinion, it should look onto `aud` and `nonce` in the kb jwt only as those bind the presentation to it (aud) and the respective presentation transaction (nonce). ",
+          "createdAt": "2023-12-08T17:10:52Z",
+          "updatedAt": "2023-12-08T17:10:52Z"
+        }
+      ]
     }
   ],
   "pulls": [
